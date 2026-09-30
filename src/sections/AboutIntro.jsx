@@ -1,54 +1,58 @@
 import React from 'react';
-import { Sparkles, Terminal, Heart } from 'lucide-react';
+import { HandCircle, WashiTape } from '../components/Doodles';
 
 export default function AboutIntro() {
   return (
-    <section id="about" className="about-intro-section">
+    <section id="about" className="about-section">
       <div className="container">
-        <div className="about-card-wrapper">
-          <div className="about-taped-corner" />
+        <div className="about-zine-spread">
+          
+          <div className="about-zine-main">
+            <span className="about-eyebrow">A little introduction /</span>
+            
+            <h2 className="about-manifesto-quote">
+              I’m Richardsen — I like turning random ideas into things that probably shouldn’t work, but somehow do.
+            </h2>
 
-          <div className="about-intro-grid">
-            <div className="about-main-text">
-              <span className="about-heading-small">ABOUT ME</span>
-              
-              <h2 className="about-lead-statement font-display">
-                I LIKE BUILDING WEIRD &amp; TACTILE THINGS WITH CODE, AI, AND DESIGN.
-              </h2>
+            <p className="about-short-story font-body">
+              I build at the boundary where software intelligence and tactile visual design collide. 
+              Whether it&apos;s crafting autonomous local AI systems for macOS or lightweight terminal platforms, 
+              I make things to explore what&apos;s possible.
+            </p>
 
-              <p className="about-short-bio font-body">
-                Hey, I&apos;m Richardsen. I build software where intelligence and visual craft meet — from local AI assistants that physically control your screen to lightning-fast terminal tools and playful web experiences.
-              </p>
-
-              {/* Playful Topic Pills */}
-              <div className="about-pill-cloud">
-                <span className="topic-pill pill-code">
-                  💻 CODE
-                </span>
-                <span className="topic-pill pill-ai">
-                  🤖 LOCAL AI
-                </span>
-                <span className="topic-pill pill-design">
-                  🎨 UI / UX
-                </span>
-                <span className="topic-pill pill-weird">
-                  ⚡ EXPERIMENTS
-                </span>
+            {/* Circled Keywords */}
+            <div className="about-keywords-row">
+              <div className="keyword-tag">
+                <HandCircle color="#00B4D8" />
+                <span>AI</span>
               </div>
-            </div>
-
-            {/* Aside Note Card */}
-            <div className="about-aside-card">
-              <h3 className="aside-title">CURRENT STATUS</h3>
-              <p className="aside-text font-body">
-                Usually found tinkering at 2 AM with a suspicious amount of caffeine, 37 browser tabs, and 100 Git commits.
-              </p>
-              <div className="aside-stamp">
-                <Sparkles size={14} />
-                <span>PATHANAMTHITTA, INDIA</span>
+              <div className="keyword-tag">
+                <HandCircle color="#6C5CE7" />
+                <span>CODE</span>
+              </div>
+              <div className="keyword-tag">
+                <HandCircle color="#2EC4B6" />
+                <span>DESIGN</span>
+              </div>
+              <div className="keyword-tag">
+                <HandCircle color="#FF6B6B" />
+                <span>CREATIVE TECH</span>
               </div>
             </div>
           </div>
+
+          {/* Aside Sticky Note */}
+          <div className="about-sticky-note">
+            <div className="sticky-tape" />
+            <h3 className="sticky-heading">CREATOR NOTES</h3>
+            <p className="sticky-body">
+              Most of my projects start with &quot;wait... what if I tried this?&quot; and end with a suspicious amount of caffeine and 37 browser tabs.
+            </p>
+            <div className="sticky-footnote">
+              PATHANAMTHITTA, KERALA, INDIA
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { ArrowDown } from 'lucide-react';
+import { DoodleStar, HandUnderline } from '../components/Doodles';
 
 export default function HeroPoster() {
-  const [characterTilt, setCharacterTilt] = useState({ x: 0, y: 0 });
+  const [mascotOffset, setMascotOffset] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 16;
-    const y = (clientY / window.innerHeight - 0.5) * 16;
-    setCharacterTilt({ x, y });
+    const x = (clientX / window.innerWidth - 0.5) * 18;
+    const y = (clientY / window.innerHeight - 0.5) * 18;
+    setMascotOffset({ x, y });
   };
 
   const scrollToWork = () => {
@@ -17,57 +18,58 @@ export default function HeroPoster() {
   };
 
   return (
-    <section id="hero" className="hero-poster-section" onMouseMove={handleMouseMove}>
-      <div className="container hero-poster-stage">
+    <section id="hero" className="hero-section" onMouseMove={handleMouseMove}>
+      <div className="container hero-poster-canvas">
         
-        {/* Playful Stickers on Poster */}
-        <div className="sticker-note sticker-note-1 font-hand">
-          ✨ yes, I actually make things!
+        {/* Playful Handwritten Sticky Notes (NO emojis) */}
+        <div className="hero-hand-note note-left">
+          <span>yes, I actually make things!</span>
         </div>
 
-        <div className="sticker-note sticker-note-2 font-hand">
-          🚀 works on my machine™
+        <div className="hero-hand-note note-right">
+          <span>works on my machine*</span>
         </div>
 
-        {/* Giant Poster Display Typography */}
-        <h1 className="hero-giant-headline font-poster">
-          <span className="hero-name-line-1">RICHARDSEN</span>
-          <span className="hero-name-line-2">THOMAS</span>
+        {/* Giant Expressive Poster Headline */}
+        <h1 className="hero-giant-title">
+          <span className="name-top">RICHARDSEN</span>
+          <span className="name-bottom">THOMAS</span>
         </h1>
 
-        {/* 3D Character Mascot Centerpiece (Overlapping Type) */}
+        {/* 3D Character Mascot (Interacting & Overlapping Type) */}
         <div 
-          className="hero-character-anchor"
+          className="hero-mascot-wrapper"
           style={{
-            transform: `translate(calc(-50% + ${characterTilt.x}px), calc(-42% + ${characterTilt.y}px))`
+            transform: `translate(calc(-50% + ${mascotOffset.x}px), calc(-44% + ${mascotOffset.y}px))`
           }}
         >
           <img 
             src="/assets/avatar.png" 
             alt="Richardsen Thomas Mascot" 
-            className="hero-character-img"
+            className="hero-mascot-image"
             loading="eager"
           />
         </div>
 
-        {/* Bottom Supporting Ribbon */}
-        <div className="hero-bottom-ribbon">
-          <div className="hero-roles-banner font-sans">
-            <span>DESIGNER</span>
-            <span className="dot">×</span>
-            <span>DEVELOPER</span>
-            <span className="dot">×</span>
-            <span>EXPERIMENTER</span>
-          </div>
-
-          <p className="hero-quick-tagline font-body">
-            Turning random ideas into software that probably shouldn&apos;t work, but somehow does.
+        {/* Supporting Editorial Ribbon */}
+        <div className="hero-footer-ribbon">
+          <p className="hero-tagline-text">
+            Designer, developer &amp; dreamer.
           </p>
 
-          <div className="hero-scroll-pill font-sans" onClick={scrollToWork}>
-            <span>EXPLORE WORK</span>
+          <span className="hero-sub-note">
+            RTOMS · CODE × AI × DESIGN
+          </span>
+
+          <button 
+            type="button"
+            className="hero-scroll-btn" 
+            onClick={scrollToWork}
+            aria-label="Scroll to selected work"
+          >
+            <span>SELECTED WORK</span>
             <ArrowDown size={14} />
-          </div>
+          </button>
         </div>
 
       </div>

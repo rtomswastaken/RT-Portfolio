@@ -1,9 +1,9 @@
 import React from 'react';
-import { ArrowUpRight, Terminal } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { GitHubIcon, LinkedInIcon, InstagramIcon, MailIcon } from '../components/Icons';
 
-export default function ContactPoster({ onOpenTerminal }) {
-  const channels = [
+export default function ContactPoster() {
+  const links = [
     { label: "GITHUB", url: "https://github.com/rtomswastaken", icon: GitHubIcon },
     { label: "LINKEDIN", url: "https://linkedin.com/in/richardsenthomas", icon: LinkedInIcon },
     { label: "INSTAGRAM", url: "https://instagram.com/rtoooms", icon: InstagramIcon },
@@ -11,54 +11,43 @@ export default function ContactPoster({ onOpenTerminal }) {
   ];
 
   return (
-    <footer id="contact" className="contact-final-section">
+    <footer id="contact" className="contact-section">
       <div className="container">
         
-        <h2 className="final-giant-statement font-poster">
-          STILL <span className="statement-blue">BUILDING.</span><br />
-          SEE YOU AROUND.
+        {/* Giant Final Poster Typography */}
+        <h2 className="contact-huge-headline">
+          LET&apos;S <span className="headline-cyan">MAKE</span><br />
+          SOMETHING.
         </h2>
 
-        <p className="final-sub-paragraph font-body">
-          Got an interesting idea, an AI experiment, or just want to chat about design and code? Let&apos;s build something cool.
+        <p className="contact-sub-statement">
+          Got an idea, a local AI concept, or want to collaborate on something weird and wonderful? Let&apos;s talk.
         </p>
 
-        {/* Clean Oversized Link Pills */}
-        <div className="final-channels-row">
-          {channels.map((ch) => {
-            const Icon = ch.icon;
+        {/* Clean Oversized Channel Buttons */}
+        <div className="contact-links-deck">
+          {links.map((item) => {
+            const Icon = item.icon;
             return (
               <a
-                key={ch.label}
-                href={ch.url}
+                key={item.label}
+                href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="channel-pill-link"
+                className="channel-stamp-btn"
               >
                 <Icon size={18} />
-                <span>{ch.label}</span>
-                <ArrowUpRight size={16} />
+                <span>{item.label}</span>
+                <ArrowUpRight size={15} />
               </a>
             );
           })}
         </div>
 
-        {/* Tiny Easter Egg for the CLI Terminal Portfolio */}
-        <div className="footer-easter-egg">
-          <button 
-            className="easter-egg-btn"
-            onClick={onOpenTerminal}
-            title="Easter egg: Launch interactive terminal"
-          >
-            <Terminal size={14} style={{ display: 'inline', marginRight: '6px' }} />
-            <span>&gt;_ npx rtoms</span>
-          </button>
-        </div>
-
         {/* Minimal Colophon */}
-        <div className="simple-colophon font-sans">
-          <span>RTOMS © 2026 // RICHARDSEN THOMAS</span>
-          <span>PATHANAMTHITTA, KERALA, INDIA</span>
+        <div className="clean-footer">
+          <span>RTOMS · RICHARDSEN THOMAS</span>
+          <span>© 2026 · PATHANAMTHITTA, KERALA, INDIA</span>
         </div>
 
       </div>

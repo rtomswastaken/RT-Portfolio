@@ -1,77 +1,79 @@
 import React from 'react';
-import { Camera, Gamepad2, Car, Sparkles, Heart } from 'lucide-react';
+import { Camera, Gamepad2, Compass, Pencil } from 'lucide-react';
+import { WashiTape, DoodleStar } from '../components/Doodles';
 
 export default function PersonalPlayground() {
-  const pursuits = [
+  const scraps = [
     {
-      icon: "🎮",
-      title: "3D & Game Development",
-      desc: "Toying with procedural mechanics, physics, and interactive rendering."
+      label: "3D & GAMES",
+      desc: "Procedural geometry, mechanics, and spatial physics.",
+      tilt: "scrap-1"
     },
     {
-      icon: "🏎️",
-      title: "Cars & Machine Craft",
-      desc: "Deep appreciation for automotive silhouettes, engineering precision, and curves."
+      label: "CARS & ENGINES",
+      desc: "Aerodynamic silhouettes, mechanical craft, and curvature.",
+      tilt: "scrap-2"
     },
     {
-      icon: "📸",
-      title: "Photography & Video",
-      desc: "Capturing candid street frames, color grading, and ambient visual storytelling."
+      label: "PHOTOGRAPHY",
+      desc: "Candid street frames, natural lighting, and color grading.",
+      tilt: "scrap-3"
     },
     {
-      icon: "✏️",
-      title: "Doodling & UI Iteration",
-      desc: "Turning wild napkin sketches into tactile digital vector components."
+      label: "DOODLING & UI",
+      desc: "From wild notebook sketches to vector UI components.",
+      tilt: "scrap-4"
     }
   ];
 
   return (
-    <section id="personal" className="personal-scrapbook-section">
+    <section id="personal" className="personal-section">
       <div className="container">
-        <div className="scrapbook-board">
+        
+        {/* Header */}
+        <div className="personal-header-block">
+          <span className="personal-hand-title">When I&apos;m not in code /</span>
+          <h2 className="personal-giant-title">OFF-SCREEN INTERESTS</h2>
+        </div>
+
+        {/* Freeform Scrapbook Collage */}
+        <div className="scrapbook-collage-stage">
           
-          <div className="scrapbook-headline-wrap">
-            <span className="scrapbook-subhead">SCRAPBOOK</span>
-            <h2 className="scrapbook-title font-poster">WHEN I&apos;M NOT CODING...</h2>
+          {/* Tortoise Mascot Polaroid Card */}
+          <div className="tortoise-mascot-card">
+            <WashiTape width={70} height={20} rotation={-3} style={{ position: 'absolute', top: '-10px', left: '30px' }} />
+
+            <div className="mascot-bubble font-hand">
+              “Slow &amp; steady builds good things.”
+            </div>
+
+            <div className="tortoise-img-wrap">
+              <img 
+                src="/assets/mascot.png" 
+                alt="Tortoise Mascot" 
+                className="tortoise-img"
+                loading="lazy"
+              />
+            </div>
+
+            <h3 className="tortoise-caption-title font-quirky">TORTOISE ENTHUSIAST</h3>
+            <p className="tortoise-caption-text font-body">
+              Official studio mascot. A gentle reminder that quality code is built with patience and care.
+            </p>
           </div>
 
-          <div className="scrapbook-grid">
-            
-            {/* Mascot Polaroid Card */}
-            <div className="turtle-mascot-card">
-              <div className="turtle-speech-bubble font-hand">
-                “Slow &amp; steady builds good things.”
+          {/* Floating Words & Interest Fragments */}
+          <div className="floating-interests-cloud">
+            {scraps.map((s) => (
+              <div key={s.label} className={`interest-scrap-item ${s.tilt}`}>
+                <span className="interest-tag-name">{s.label}</span>
+                <span className="interest-tag-desc font-body">{s.desc}</span>
               </div>
-
-              <div className="turtle-img-wrap">
-                <img 
-                  src="/assets/mascot.png" 
-                  alt="Tortoise Mascot"
-                  className="turtle-mascot-image"
-                  loading="lazy"
-                />
-              </div>
-
-              <h3 className="turtle-card-title">TORTOISE ENTHUSIAST</h3>
-              <p className="turtle-card-caption font-body">
-                Official studio mascot. Reminding me to build with patience, quality, and no hasty shortcuts.
-              </p>
-            </div>
-
-            {/* Creative Pursuits Mosaic */}
-            <div className="creative-mosaic">
-              {pursuits.map((item, idx) => (
-                <div key={idx} className="mosaic-cell">
-                  <span className="mosaic-icon">{item.icon}</span>
-                  <h4 className="mosaic-title font-sans">{item.title}</h4>
-                  <p className="mosaic-desc font-body">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-
+            ))}
           </div>
 
         </div>
+
       </div>
     </section>
   );

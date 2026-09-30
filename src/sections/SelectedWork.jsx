@@ -1,178 +1,168 @@
-import { ArrowUpRight, ExternalLink, Terminal } from 'lucide-react';
+import React from 'react';
+import { ArrowUpRight, ExternalLink, Globe } from 'lucide-react';
 import { GitHubIcon } from '../components/Icons';
+import { WashiTape } from '../components/Doodles';
 
 export default function SelectedWork() {
   const projects = [
     {
       num: "01",
       title: "ZOE ALPHA",
-      tag: "LOCAL AI ASSISTANT",
-      summary: "100% Local AI Computer Assistant for macOS that sees your screen, listens, and physically controls your Mac using native Quartz events. Zero cloud APIs.",
-      tech: ["Python", "PyObjC", "Quartz", "Qwen3:14b", "MiniCPM-V", "faster-whisper"],
+      oneLiner: "A 100% local AI computer assistant for macOS that perceives your screen and physically navigates the OS with zero cloud APIs.",
       githubUrl: "https://github.com/rtomswastaken/zoe-alpha-v0.1",
       demoUrl: null,
-      layout: "card-layout-left",
-      visualTheme: "project-pane-teal",
-      visualType: "notch"
+      layout: "piece-layout-left",
+      tilt: "tilt-left",
+      bgStyle: "artwork-bg-teal",
+      type: "notch"
     },
     {
       num: "02",
       title: "CHATTUI",
-      tag: "TERMINAL PLATFORM",
-      summary: "A modern, lightweight terminal chat platform built from scratch in Go with Charm's Bubble Tea, Lip Gloss styling, and private mesh networking over Tailscale.",
-      tech: ["Go", "Bubble Tea", "Lip Gloss", "SQLite", "Tailscale", "Docker"],
+      oneLiner: "A lightweight, Discord-inspired terminal chat platform built from scratch in Go with Charm's Bubble Tea and private networking over Tailscale.",
       githubUrl: "https://github.com/rtomswastaken/chattui",
       demoUrl: null,
-      layout: "card-layout-right",
-      visualTheme: "project-pane-navy",
-      visualType: "terminal"
+      layout: "piece-layout-right",
+      tilt: "tilt-right",
+      bgStyle: "artwork-bg-deep",
+      type: "terminal"
     },
     {
       num: "03",
       title: "ORIAH IDE",
-      tag: "DEVELOPER WORKSPACE",
-      summary: "Cursor-inspired AI Agent Terminal IDE built with Python Textual 8.2 & Pygments, featuring a strict 4-quadrant layout for autonomous code generation and checklists.",
-      tech: ["Python", "Textual 8.2", "Pygments", "Rich", "AI Agents"],
+      oneLiner: "Cursor-inspired AI Agent Terminal IDE built with Python Textual 8.2 & Pygments, featuring a strict 4-quadrant layout for autonomous code loops.",
       githubUrl: "https://github.com/rtomswastaken/Oriah-IDE",
       demoUrl: null,
-      layout: "card-layout-left",
-      visualTheme: "project-pane-violet",
-      visualType: "ide"
+      layout: "piece-layout-left",
+      tilt: "tilt-left",
+      bgStyle: "artwork-bg-violet",
+      type: "quadrant"
     },
     {
       num: "04",
       title: "ECOCLASSROOM",
-      tag: "LIVE WEB APPLICATION",
-      summary: "Gamified environmental classroom platform empowering students and teachers with real-world sustainability tracking: 'Small Actions. Big Impact.' Deployed live on Vercel.",
-      tech: ["React 19", "Vite", "JavaScript", "Lucide", "Canvas Confetti"],
+      oneLiner: "Gamified environmental classroom web app for students and teachers: 'Small Actions. Big Impact.' Deployed live on Vercel.",
       githubUrl: "https://github.com/rtomswastaken/eco-classroom",
       demoUrl: "https://eco-classroom.vercel.app",
-      layout: "card-layout-right",
-      visualTheme: "project-pane-emerald",
-      visualType: "eco"
+      layout: "piece-layout-right",
+      tilt: "tilt-right",
+      bgStyle: "artwork-bg-mint",
+      type: "eco"
     }
   ];
 
   return (
-    <section id="work" className="selected-work-section">
+    <section id="work" className="work-section">
       <div className="container">
         
-        {/* Simple Playful Section Header */}
-        <div className="section-title-wrap">
-          <span className="section-label">SELECTED WORK</span>
-          <h2 className="section-headline font-poster">FEATURED PROJECTS</h2>
-          <p className="section-sublead font-body">
-            Four focused things I built from scratch. Code you can inspect right now.
-          </p>
+        {/* Gallery Section Header */}
+        <div className="work-header-block">
+          <span className="work-header-subtitle">Selected experiments &amp; tools /</span>
+          <h2 className="work-header-title">FEATURED WORK</h2>
         </div>
 
-        {/* Poster Artwork Cards Stack */}
-        <div className="projects-poster-stack">
+        {/* Visual Gallery Stream (Asymmetric, Un-carded) */}
+        <div className="work-gallery-flow">
           {projects.map((proj) => (
-            <article key={proj.num} className={`project-artwork-card ${proj.layout}`}>
+            <div key={proj.num} className={`project-piece ${proj.layout}`}>
               
-              {/* Visual Artwork Showcase Pane */}
-              <div className={`project-visual-pane ${proj.visualTheme}`}>
-                {proj.visualType === 'notch' && (
-                  <div className="notch-graphic-showcase">
-                    <div className="notch-screen-bezel">
-                      <div className="bezel-notch" />
-                      <div className="bezel-content-pulse">
-                        <span>Z-O-E // SCREEN VISION</span>
-                        <span className="bezel-sub">100% On-Device Metal Acceleration</span>
-                      </div>
+              {/* Left / Artwork Side */}
+              <div className={`project-artwork-frame ${proj.bgStyle} ${proj.tilt}`}>
+                <WashiTape 
+                  width={80} 
+                  height={22} 
+                  rotation={-4} 
+                  className="card-tape-top"
+                  style={{ position: 'absolute', top: '-10px', left: '20px' }}
+                />
+
+                {proj.type === 'notch' && (
+                  <div className="visual-notch-graphic">
+                    <div className="mock-camera-notch" />
+                    <span className="notch-status-text">ZOE // SCREEN VISION</span>
+                    <span className="notch-sub-line">Apple Silicon Local Acceleration</span>
+                  </div>
+                )}
+
+                {proj.type === 'terminal' && (
+                  <div className="visual-terminal-graphic">
+                    <div className="term-bar">
+                      <span className="t-dot td-red" />
+                      <span className="t-dot td-yellow" />
+                      <span className="t-dot td-green" />
+                    </div>
+                    <div className="term-text-body">
+                      <div>chattui - tailscale encrypted mesh</div>
+                      <div className="term-active-line">&gt; connected to #global</div>
+                      <div>&gt; ready for messages_</div>
                     </div>
                   </div>
                 )}
 
-                {proj.visualType === 'terminal' && (
-                  <div className="terminal-graphic-showcase">
-                    <div className="term-head">
-                      <span className="dot dot-r" />
-                      <span className="dot dot-y" />
-                      <span className="dot dot-g" />
-                      <span style={{ fontSize: '0.72rem', color: '#8FD4EE', marginLeft: 'auto' }}>chattui : tailscale-mesh</span>
+                {proj.type === 'quadrant' && (
+                  <div className="visual-quadrant-graphic">
+                    <div className="q-tile">
+                      <span className="q-name">DIRECTORY</span>
+                      <span className="q-sub">File Tree</span>
                     </div>
-                    <div className="term-body">
-                      <div>● Connected to #global</div>
-                      <div className="term-line-active">&gt; rtoms: bubble tea + tailscale running!</div>
-                      <div style={{ color: '#537A99' }}>&gt; Type message or /help... █</div>
+                    <div className="q-tile q-active">
+                      <span className="q-name">EDITOR</span>
+                      <span className="q-sub">Pygments Syntax</span>
                     </div>
-                  </div>
-                )}
-
-                {proj.visualType === 'ide' && (
-                  <div className="ide-graphic-showcase">
-                    <div className="ide-box">
-                      <span className="ide-title">📁 DIRECTORY</span>
-                      <span className="ide-desc">File tree tabs</span>
+                    <div className="q-tile">
+                      <span className="q-name">CHECKLIST</span>
+                      <span className="q-sub">Agent Task Progress</span>
                     </div>
-                    <div className="ide-box box-active">
-                      <span className="ide-title">📝 EDITOR</span>
-                      <span className="ide-desc">Pygments syntax</span>
-                    </div>
-                    <div className="ide-box">
-                      <span className="ide-title">📋 CHECKLIST</span>
-                      <span className="ide-desc">[x] Agent reports</span>
-                    </div>
-                    <div className="ide-box">
-                      <span className="ide-title">🤖 AGENT MODE</span>
-                      <span className="ide-desc">Autonomous loop</span>
+                    <div className="q-tile">
+                      <span className="q-name">AGENT MODE</span>
+                      <span className="q-sub">Live Terminal</span>
                     </div>
                   </div>
                 )}
 
-                {proj.visualType === 'eco' && (
-                  <div className="eco-graphic-showcase">
-                    <span className="eco-globe-badge">🌍</span>
-                    <span className="eco-badge-tag">LIVE ON VERCEL ↗</span>
+                {proj.type === 'eco' && (
+                  <div className="visual-sustainability-graphic">
+                    <Globe className="globe-vector-icon" strokeWidth={1.5} />
+                    <span className="eco-live-badge">LIVE ON VERCEL</span>
                   </div>
                 )}
               </div>
 
-              {/* Story & Links Pane */}
-              <div className="project-text-pane">
-                <div className="project-meta-row">
-                  <span className="project-num-big">{proj.num}</span>
-                  <span className="project-badge-pill">{proj.tag}</span>
-                </div>
+              {/* Text & Link Side */}
+              <div className="project-story-col">
+                <span className="project-number-stamp font-serif">{proj.num}</span>
 
-                <h3 className="project-heading font-poster">{proj.title}</h3>
+                <h3 className="project-big-name">{proj.title}</h3>
 
-                <p className="project-summary font-body">{proj.summary}</p>
+                <p className="project-one-liner font-body">{proj.oneLiner}</p>
 
-                <div className="project-tech-chips font-sans">
-                  {proj.tech.map((t) => (
-                    <span key={t} className="tech-chip">{t}</span>
-                  ))}
-                </div>
+                <div className="project-links-row">
+                  <a 
+                    href={proj.githubUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-github-link"
+                  >
+                    <GitHubIcon size={16} />
+                    <span>VIEW ON GITHUB</span>
+                    <ArrowUpRight size={15} />
+                  </a>
 
-                <div className="project-action-links">
                   {proj.demoUrl && (
                     <a 
                       href={proj.demoUrl} 
                       target="_blank" 
-                      rel="noopener noreferrer"
-                      className="btn-action-main"
+                      rel="noopener noreferrer" 
+                      className="btn-demo-link"
                     >
-                      <span>LAUNCH APP</span>
+                      <span>LIVE DEMO</span>
                       <ExternalLink size={14} />
                     </a>
                   )}
-
-                  <a 
-                    href={proj.githubUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="btn-action-main"
-                  >
-                    <GitHubIcon size={16} />
-                    <span>VIEW REPO</span>
-                  </a>
                 </div>
               </div>
 
-            </article>
+            </div>
           ))}
         </div>
 
