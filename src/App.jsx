@@ -1,14 +1,25 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 
-import SimpleNavbar from './components/SimpleNavbar';
-import HeroPoster from './sections/HeroPoster';
-import AboutIntro from './sections/AboutIntro';
-import SelectedWork from './sections/SelectedWork';
-import PersonalPlayground from './sections/PersonalPlayground';
-import ContactPoster from './sections/ContactPoster';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import ProjectsPage from './pages/ProjectsPage';
 
-export default function App() {
+// Scroll to top helper on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  return null;
+}
+
+function MainApp() {
+  const location = useLocation();
+
   useEffect(() => {
     // Lenis smooth scroll
     const lenis = new Lenis({
@@ -32,24 +43,26 @@ export default function App() {
 
   return (
     <div className="portfolio-scrapbook-root">
-      <SimpleNavbar />
+      <ScrollToTop />
+      
+      {/* Show Navbar on all views */}
+      <Navbar />
 
       <main id="main-content">
-        {/* 01: Hero Giant Poster */}
-        <HeroPoster />
-
-        {/* 02: Little Human Introduction */}
-        <AboutIntro />
-
-        {/* 03: Selected Work (4 Curated Artwork Pieces) */}
-        <SelectedWork />
-
-        {/* 04: Personal & Creative Interests (Mascot Collage) */}
-        <PersonalPlayground />
-
-        {/* 05: Giant Poster Contact */}
-        <ContactPoster />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="*" element={<HomePage />} />
+        </Routes>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <MainApp />
+    </BrowserRouter>
   );
 }

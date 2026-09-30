@@ -69,6 +69,61 @@ export const DoodleStar = ({ size = 20, color = "#00B4D8", className = "" }) => 
   </svg>
 );
 
+// Hand-drawn Turtle Doodle (SVG Vector - zero emoji)
+export const TurtleDoodle = ({ size = 32, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 48 48" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-turtle ${className}`}
+  >
+    {/* Shell */}
+    <ellipse cx="24" cy="24" rx="14" ry="11" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+    <path d="M24 13V35M14 24H34M17 17L31 31M17 31L31 17" stroke={color} strokeWidth="1.6" strokeLinecap="round" opacity="0.65" />
+    {/* Head */}
+    <circle cx="41" cy="24" r="4.5" stroke={color} strokeWidth="2.2" />
+    <circle cx="42" cy="22.5" r="1" fill={color} />
+    {/* Legs */}
+    <path d="M14 15C11 11 8 13 10 17M14 33C11 37 8 35 10 31M31 14C34 10 38 12 36 16M31 34C34 38 38 36 36 32" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+    {/* Tiny Tail */}
+    <path d="M10 24H6" stroke={color} strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
+// Minimal Apple-inspired hardware silhouette doodle (zero copyright logo, pure aesthetic homage)
+export const AppleDoodle = ({ size = 28, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 32 32" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-apple ${className}`}
+  >
+    <path d="M16 6C17 3.5 19 2 21 2C21 4.5 19 6 16 6Z" fill={color} opacity="0.8" />
+    <path d="M22.5 11C20.5 11 19 12 16 12C13 12 11.5 11 9.5 11C6 11 3 14 3 19C3 24.5 7 29.5 10 29.5C11.5 29.5 13 28.5 16 28.5C19 28.5 20.5 29.5 22 29.5C25 29.5 29 24.5 29 19C29 14.5 26.5 11 22.5 11Z" stroke={color} strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
+// Hand-drawn camera doodle
+export const CameraDoodle = ({ size = 28, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 36 36" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-camera ${className}`}
+  >
+    <rect x="4" y="10" width="28" height="20" rx="4" stroke={color} strokeWidth="2.2" />
+    <path d="M12 10L14 6H22L24 10" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+    <circle cx="18" cy="20" r="5.5" stroke={color} strokeWidth="2.2" />
+    <circle cx="27" cy="14" r="1.5" fill={color} />
+  </svg>
+);
+
 // Tape strip effect
 export const WashiTape = ({ width = 80, height = 24, rotation = -3, color = "rgba(255, 230, 109, 0.65)", className = "" }) => (
   <div 

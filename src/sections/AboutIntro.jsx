@@ -1,5 +1,5 @@
 import React from 'react';
-import { HandCircle, WashiTape } from '../components/Doodles';
+import { HandCircle, WashiTape, TurtleDoodle } from '../components/Doodles';
 
 export default function AboutIntro() {
   return (
@@ -8,48 +8,65 @@ export default function AboutIntro() {
         <div className="about-zine-spread">
           
           <div className="about-zine-main">
-            <span className="about-eyebrow">A little introduction /</span>
+            <span className="about-eyebrow font-hand">who is this weird person? /</span>
             
-            <h2 className="about-manifesto-quote">
-              I’m Richardsen — I like turning random ideas into things that probably shouldn’t work, but somehow do.
+            <h2 className="about-manifesto-quote font-quirky">
+              I’m Richardsen. A student from Kerala who likes coding, designing, and making unnecessarily complicated things for fun.
             </h2>
 
             <p className="about-short-story font-body">
-              I build at the boundary where software intelligence and tactile visual design collide. 
-              Whether it&apos;s crafting autonomous local AI systems for macOS or lightweight terminal platforms, 
-              I make things to explore what&apos;s possible.
+              I like building at the weird intersection where software architecture, tactile visual identity, and playful aesthetics meet. 
+              Most of my best ideas come from wondering &quot;wait... can I actually make a computer do that?&quot; and then refusing to stop until it works.
             </p>
 
-            {/* Circled Keywords */}
-            <div className="about-keywords-row">
-              <div className="keyword-tag">
+            {/* Scattered Visual Keywords with Hand-drawn circles */}
+            <div className="scattered-keywords-cloud">
+              <div className="keyword-item tilt-k1">
                 <HandCircle color="#00B4D8" />
-                <span>AI</span>
-              </div>
-              <div className="keyword-tag">
-                <HandCircle color="#6C5CE7" />
                 <span>CODE</span>
               </div>
-              <div className="keyword-tag">
-                <HandCircle color="#2EC4B6" />
+              <div className="keyword-item tilt-k2">
+                <HandCircle color="#6C5CE7" />
                 <span>DESIGN</span>
               </div>
-              <div className="keyword-tag">
+              <div className="keyword-item tilt-k3">
+                <HandCircle color="#2EC4B6" />
+                <span>AI</span>
+              </div>
+              <div className="keyword-item tilt-k4">
                 <HandCircle color="#FF6B6B" />
-                <span>CREATIVE TECH</span>
+                <span>DOODLE</span>
+              </div>
+              <div className="keyword-item tilt-k5">
+                <HandCircle color="#0B2545" />
+                <span>PHOTO</span>
+              </div>
+              <div className="keyword-item tilt-k6">
+                <HandCircle color="#E67E22" />
+                <span>VIDEO</span>
+              </div>
+              <div className="keyword-item tilt-k7">
+                <HandCircle color="#27AE60" />
+                <span className="turtle-highlight">
+                  <TurtleDoodle size={18} color="#27AE60" className="inline-turtle" />
+                  TURTLES
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Aside Sticky Note */}
+          {/* Hand-taped Creator Card */}
           <div className="about-sticky-note">
-            <div className="sticky-tape" />
-            <h3 className="sticky-heading">CREATOR NOTES</h3>
-            <p className="sticky-body">
-              Most of my projects start with &quot;wait... what if I tried this?&quot; and end with a suspicious amount of caffeine and 37 browser tabs.
-            </p>
-            <div className="sticky-footnote">
-              PATHANAMTHITTA, KERALA, INDIA
+            <WashiTape width={70} height={20} rotation={-2} style={{ position: 'absolute', top: '-10px', left: '20px' }} />
+            <h3 className="sticky-heading font-quirky">LITTLE FACTS</h3>
+            <ul className="sticky-fact-list font-body">
+              <li>Based in Pathanamthitta, Kerala, India</li>
+              <li>Terminal nerd, macOS tinkerer</li>
+              <li>Firm believer that software should have personality</li>
+              <li>Runs entirely on curiosity and hot tea</li>
+            </ul>
+            <div className="sticky-footnote font-hand">
+              *no corporate vibes beyond this point
             </div>
           </div>
 
