@@ -75,7 +75,7 @@ export default function ContactPage() {
 
   return (
     <div className="contact-page-root">
-      <InteractiveBackground />
+      <InteractiveBackground subtle={true} />
 
       {/* Top Glass Navigation Bar */}
       <header className="contact-top-bar">
