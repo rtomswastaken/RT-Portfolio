@@ -5,6 +5,7 @@ import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import ProjectsPage from './pages/ProjectsPage';
+import ContactPage from './pages/ContactPage';
 
 // Scroll to top helper on route change
 function ScrollToTop() {
@@ -52,6 +53,7 @@ function MainApp() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>

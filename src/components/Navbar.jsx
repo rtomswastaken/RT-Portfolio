@@ -7,62 +7,61 @@ export default function Navbar() {
   const isHome = location.pathname === '/';
 
   const handleNavClick = (e, targetHash) => {
-    e.preventDefault();
     if (isHome) {
-      if (!targetHash) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
+      if (targetHash) {
+        e.preventDefault();
         const el = document.querySelector(targetHash);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
       }
     } else {
-      navigate('/' + (targetHash || ''));
-      setTimeout(() => {
-        if (targetHash) {
+      if (targetHash) {
+        e.preventDefault();
+        navigate('/' + targetHash);
+        setTimeout(() => {
           const el = document.querySelector(targetHash);
           if (el) el.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }, 100);
+        }, 120);
+      }
     }
   };
 
   return (
-    <header className="minimal-nav">
+    <header className="frosted-glass-nav" aria-label="Main Navigation">
       <Link 
         to="/" 
-        onClick={(e) => handleNavClick(e, '')} 
-        className="nav-brand-sig"
-        aria-label="RTOMS Corner Home"
+        onClick={(e) => {
+          if (isHome) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }} 
+        className="glass-nav-brand"
+        aria-label="RTOMS Home"
       >
         <span>RTOMS</span>
-        <span className="sig-dot" />
+        <span className="glass-brand-dot" />
       </Link>
 
-      <nav className="nav-links-cluster" aria-label="Main Navigation">
+      <nav className="glass-nav-links">
         <a 
-          href="#about" 
+          href="/#about" 
           onClick={(e) => handleNavClick(e, '#about')} 
-          className="nav-link-item"
+          className="glass-nav-item"
         >
           ABOUT
         </a>
         <Link 
           to="/projects" 
-          className={`nav-link-item ${location.pathname === '/projects' ? 'active-nav-link' : ''}`}
+          className={`glass-nav-item ${location.pathname === '/projects' ? 'active-glass-nav' : ''}`}
         >
           PROJECTS
         </Link>
-        <a 
-          href="#contact" 
-          onClick={(e) => handleNavClick(e, '#contact')} 
-          className="nav-link-item"
+        <Link 
+          to="/contact" 
+          className={`glass-nav-item ${location.pathname === '/contact' ? 'active-glass-nav' : ''}`}
         >
           CONTACT
-        </a>
+        </Link>
       </nav>
     </header>
   );

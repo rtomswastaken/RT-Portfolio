@@ -5,41 +5,34 @@ export default function HeroPoster() {
 
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 16;
+    const x = (clientX / window.innerWidth - 0.5) * 18;
     const y = (clientY / window.innerHeight - 0.5) * 14;
     setMascotOffset({ x, y });
   };
 
   return (
     <section id="hero" className="hero-section" onMouseMove={handleMouseMove}>
-      <div className="container hero-layout-container">
+      <div className="hero-poster-canvas">
         
-        {/* Top Typography Zone: Clean, Powerful, Massive Poster Name */}
-        <div className="hero-title-cluster">
-          <h1 className="hero-giant-title">
-            <span className="hero-name-row name-first">RICHARDSEN</span>
-            <span className="hero-name-row name-second">THOMAS</span>
+        {/* Layer 2: Giant Richardsen Thomas Display Typography */}
+        <div className="hero-typography-layer">
+          <h1 className="hero-colossal-name">
+            <span className="name-line-first">RICHARDSEN</span>
+            <span className="name-line-second">THOMAS</span>
           </h1>
-
-          {/* Clean Introduction Statement Directly Underneath the Name */}
-          <div className="hero-intro-block">
-            <p className="hero-intro-text font-body">
-              Student from Kerala, India. I love coding, designing, and making weird things for the internet.
-            </p>
-          </div>
         </div>
 
-        {/* MASSIVE MASCOT STAGE: Occupies the vast majority of the hero, seamlessly integrated */}
+        {/* Layer 3: Massive 3D Mascot positioned DIRECTLY OVER the middle of the text */}
         <div 
-          className="hero-massive-mascot-stage"
+          className="hero-mascot-dominant-layer"
           style={{
-            transform: `translate3d(${mascotOffset.x}px, ${mascotOffset.y}px, 0)`
+            transform: `translate3d(calc(-50% + ${mascotOffset.x}px), calc(-50% + ${mascotOffset.y}px), 0)`
           }}
         >
           <img 
             src="/assets/avatar.png" 
-            alt="Richardsen Thomas 3D Mascot" 
-            className="hero-massive-mascot-img"
+            alt="Richardsen Thomas Mascot" 
+            className="hero-colossal-mascot-img"
             loading="eager"
           />
         </div>

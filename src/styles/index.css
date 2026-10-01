@@ -1,6 +1,6 @@
 /* ==========================================================================
    RTOMS — PLAYFUL BLUE DIGITAL SCRAPBOOK & EDITORIAL ARCHIVE
-   Unapologetically Blue × Massive Mascot Centerpiece × Clean Hero Typography
+   Unapologetically Blue × Massive Mascot Centerpiece × Frosted Glass UI
    ========================================================================== */
 
 :root {
@@ -103,7 +103,7 @@ a {
 .font-body { font-family: var(--font-body); }
 
 /* ==========================================================================
-   INTERACTIVE CANVAS BACKGROUND PATTERN (Clearly Visible Printed Matrix)
+   INTERACTIVE CANVAS BACKGROUND PATTERN (Messy Scattered 'rtoms' Stamp Matrix)
    ========================================================================== */
 .interactive-background-canvas {
   position: fixed;
@@ -116,9 +116,9 @@ a {
 }
 
 /* ==========================================================================
-   MINIMAL FLOATING NAVBAR
+   GENUINE FROSTED GLASS NAVIGATION
    ========================================================================== */
-.minimal-nav {
+.frosted-glass-nav {
   position: fixed;
   top: 1.5rem;
   left: 50%;
@@ -126,17 +126,18 @@ a {
   z-index: 500;
   display: flex;
   align-items: center;
-  gap: 1.75rem;
-  background: rgba(181, 220, 248, 0.90);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  padding: 0.65rem 1.6rem;
+  gap: 2rem;
+  background: rgba(220, 240, 255, 0.48);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  padding: 0.7rem 1.9rem;
   border-radius: 999px;
-  border: 1.5px solid rgba(8, 30, 62, 0.16);
-  box-shadow: 0 10px 30px rgba(8, 30, 62, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 16px 40px rgba(6, 24, 48, 0.12), inset 0 1px 1.5px rgba(255, 255, 255, 0.85);
+  transition: all 0.25s ease;
 }
 
-.nav-brand-sig {
+.glass-nav-brand {
   font-family: var(--font-quirky);
   font-weight: 900;
   font-size: 1.05rem;
@@ -145,24 +146,29 @@ a {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  transition: transform 0.2s ease;
 }
 
-.sig-dot {
+.glass-nav-brand:hover {
+  transform: scale(1.04);
+}
+
+.glass-brand-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--accent-cobalt);
 }
 
-.nav-links-cluster {
+.glass-nav-links {
   display: flex;
   align-items: center;
-  gap: 1.35rem;
+  gap: 1.5rem;
 }
 
-.nav-link-item {
+.glass-nav-item {
   font-family: var(--font-quirky);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--ink-body);
@@ -170,13 +176,13 @@ a {
   position: relative;
 }
 
-.nav-link-item:hover,
-.nav-link-item.active-nav-link {
+.glass-nav-item:hover,
+.glass-nav-item.active-glass-nav {
   color: var(--ink-midnight);
   transform: translateY(-1px);
 }
 
-.nav-link-item.active-nav-link::after {
+.glass-nav-item.active-glass-nav::after {
   content: "";
   position: absolute;
   bottom: -4px;
@@ -188,112 +194,102 @@ a {
 }
 
 /* ==========================================================================
-   01: HERO POSTER SECTION — REWORKED COMPOSITION
-   Big Name + Clean Intro Directly Underneath + Massive Mascot Filling Hero
+   01: HERO POSTER SECTION — PURE VISUAL POSTER
+   Layer 1: Messy rtoms pattern
+   Layer 2: Colossal RICHARDSEN THOMAS
+   Layer 3: Massive Mascot centered right over the middle of the text
+   Layer 4: Glass Nav
    ========================================================================== */
 .hero-section {
   position: relative;
   min-height: 100vh;
-  padding-top: clamp(6.5rem, 12vh, 8.5rem);
-  padding-bottom: 0;
+  height: 100vh;
+  min-height: 780px;
+  padding: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   background: transparent;
   overflow: hidden;
   z-index: 2;
 }
 
-.hero-layout-container {
+.hero-poster-canvas {
   position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  width: 100%;
+}
+
+/* Layer 2: Giant Richardsen Thomas Display Typography */
+.hero-typography-layer {
+  position: relative;
   z-index: 2;
-}
-
-/* Top Typography Zone */
-.hero-title-cluster {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
-}
-
-.hero-giant-title {
-  font-family: var(--font-quirky);
-  font-weight: 900;
-  font-size: clamp(3.8rem, 11vw, 9.6rem);
-  line-height: 0.84;
-  letter-spacing: -0.04em;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.name-first {
-  display: block;
-  transform: rotate(-1deg);
-  color: var(--ink-midnight);
-}
-
-.name-second {
-  display: block;
-  transform: rotate(1.2deg);
-  color: var(--accent-cobalt);
-  margin-top: -0.04em;
-}
-
-/* Clean Introduction Statement Directly Underneath the Name */
-.hero-intro-block {
-  margin-top: 1.25rem;
-  margin-bottom: 1.5rem;
-  max-width: 640px;
-  position: relative;
-  z-index: 6;
-}
-
-.hero-intro-text {
-  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--ink-midnight);
-  letter-spacing: -0.01em;
-}
-
-/* MASSIVE MASCOT STAGE: Fills the hero vertically with torso clearly visible */
-.hero-massive-mascot-stage {
-  position: relative;
-  z-index: 10;
-  width: clamp(440px, 58vw, 760px);
-  margin: 0 auto;
   display: flex;
   justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.hero-colossal-name {
+  font-family: var(--font-quirky);
+  font-weight: 900;
+  font-size: clamp(5.6rem, 18.5vw, 19.5rem);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.name-line-first {
+  display: block;
+  transform: rotate(-0.8deg);
+  color: var(--ink-midnight);
+}
+
+.name-line-second {
+  display: block;
+  transform: rotate(1deg);
+  color: var(--accent-cobalt);
+  margin-top: -0.06em;
+}
+
+/* Layer 3: Massive 3D Mascot positioned DIRECTLY OVER the middle of the text */
+.hero-mascot-dominant-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46%);
+  z-index: 10;
+  width: clamp(380px, 44vw, 680px);
+  height: clamp(500px, 68vh, 840px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   pointer-events: none;
 }
 
-.hero-massive-mascot-img {
+.hero-colossal-mascot-img {
   width: 100%;
-  height: auto;
-  max-height: clamp(480px, 58vh, 680px);
+  height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 25px 45px rgba(4, 18, 40, 0.30));
-  -webkit-mask-image: linear-gradient(to bottom, black 82%, transparent 98%);
-  mask-image: linear-gradient(to bottom, black 82%, transparent 98%);
+  filter: drop-shadow(0 30px 60px rgba(4, 18, 40, 0.35));
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
   animation: heroMascotFloat 5s ease-in-out infinite alternate;
 }
 
 @keyframes heroMascotFloat {
   0% { transform: translateY(0px) rotate(0deg); }
-  100% { transform: translateY(-12px) rotate(-1deg); }
+  100% { transform: translateY(-10px) rotate(-1deg); }
 }
 
 /* ==========================================================================
@@ -878,6 +874,258 @@ a {
 }
 
 /* ==========================================================================
+   DEDICATED CONTACT PAGE (/contact) — FROSTED GLASS UI
+   ========================================================================== */
+.contact-page-root {
+  min-height: 100vh;
+  background: transparent;
+  padding-bottom: 6rem;
+  position: relative;
+  z-index: 2;
+}
+
+.contact-top-bar {
+  padding: 1.5rem 0;
+  background: rgba(181, 220, 248, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.contact-bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.glass-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-midnight);
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(6, 24, 48, 0.06);
+  transition: all 0.2s ease;
+}
+
+.glass-back-btn:hover {
+  transform: translateX(-3px);
+  background: var(--ink-midnight);
+  color: #FFFFFF;
+}
+
+.contact-route-tag {
+  font-size: 1.25rem;
+  color: var(--accent-navy);
+}
+
+.contact-main-content {
+  padding-top: clamp(3rem, 6vh, 5rem);
+}
+
+.contact-spread-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(3rem, 6vw, 6rem);
+  align-items: start;
+}
+
+.contact-heading-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-page-headline {
+  font-size: clamp(4.5rem, 9vw, 8rem);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  color: var(--ink-midnight);
+  margin-bottom: 1.75rem;
+}
+
+.contact-page-desc {
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  color: var(--ink-body);
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+}
+
+.contact-direct-email {
+  font-weight: 700;
+  color: var(--accent-cobalt);
+  border-bottom: 2px solid var(--accent-cobalt);
+  padding-bottom: 1px;
+}
+
+.contact-social-deck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.glass-channel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ink-midnight);
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(6, 24, 48, 0.05);
+  transition: all 0.2s ease;
+}
+
+.glass-channel-pill:hover {
+  background: var(--accent-cobalt);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* Glassmorphic Contact Form */
+.glass-form-card {
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 50px rgba(6, 24, 48, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  padding: clamp(2rem, 4vw, 3.2rem);
+}
+
+.contact-actual-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.form-error-banner {
+  background: #FFE8E8;
+  color: #D32F2F;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  border: 1px solid rgba(211, 47, 47, 0.2);
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--ink-midnight);
+}
+
+.glass-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(6, 24, 48, 0.14);
+  border-radius: 12px;
+  padding: 0.95rem 1.25rem;
+  font-size: 1.05rem;
+  color: var(--ink-midnight);
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+}
+
+.glass-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--accent-cobalt);
+  box-shadow: 0 0 0 3px rgba(0, 102, 214, 0.2);
+}
+
+.glass-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.glass-send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background: var(--ink-midnight);
+  color: #FFFFFF;
+  padding: 1.05rem 2.4rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(6, 24, 48, 0.18);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 0.5rem;
+}
+
+.glass-send-btn:hover:not(:disabled) {
+  background: var(--accent-cobalt);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 30px rgba(0, 102, 214, 0.3);
+}
+
+.glass-send-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Success State */
+.contact-success-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.success-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 102, 214, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--ink-midnight);
+}
+
+.success-desc {
+  font-size: 1.1rem;
+  color: var(--ink-body);
+  max-width: 360px;
+  line-height: 1.55;
+}
+
+/* ==========================================================================
    DEDICATED PROJECTS ARCHIVE PAGE (/projects)
    Modern Editorial Archive (Clean Contrast to Chaotic Home)
    ========================================================================== */
@@ -1163,21 +1411,27 @@ a {
    ========================================================================== */
 @media (max-width: 900px) {
   .hero-section {
-    min-height: auto;
-    padding-top: 95px;
-    padding-bottom: 40px;
+    min-height: 80vh;
+    height: auto;
+    padding-top: 100px;
+    padding-bottom: 60px;
   }
-  .hero-giant-title {
-    font-size: clamp(3.6rem, 16vw, 6.5rem);
+  .hero-colossal-name {
+    font-size: clamp(3.8rem, 16vw, 7rem);
   }
-  .hero-massive-mascot-stage {
+  .hero-mascot-dominant-layer {
     position: relative;
     top: auto;
     left: auto;
     transform: none !important;
-    margin: 1.5rem 0 0;
-    width: 100%;
-    max-width: 380px;
+    margin: -1.5rem auto 0;
+    width: 90%;
+    max-width: 360px;
+    height: auto;
+  }
+  .hero-colossal-mascot-img {
+    height: auto;
+    max-height: 480px;
   }
   .about-zine-spread {
     grid-template-columns: 1fr;
@@ -1186,6 +1440,10 @@ a {
   .teasers-compact-row {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+  .contact-spread-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
   }
   .archive-header-spread {
     flex-direction: column;

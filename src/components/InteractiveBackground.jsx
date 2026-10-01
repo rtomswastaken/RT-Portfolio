@@ -14,14 +14,21 @@ export default function InteractiveBackground() {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
-    // Mouse coordinates (default off-screen)
-    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, radius: 200 };
+    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, radius: 220 };
     let time = 0;
 
-    const spacing = 48;
-    let nodes = [];
+    let stamps = [];
 
-    const initNodes = () => {
+    // Deterministic pseudo-random generator for consistent, organic placement
+    const createSeededRandom = (seed) => {
+      let s = seed;
+      return () => {
+        s = Math.sin(s) * 10000;
+        return s - Math.floor(s);
+      };
+    };
+
+    const initStamps = () => {
       dpr = window.devicePixelRatio || 1;
       width = window.innerWidth;
       height = window.innerHeight;
@@ -32,33 +39,55 @@ export default function InteractiveBackground() {
       canvas.style.height = `${height}px`;
       ctx.scale(dpr, dpr);
 
-      nodes = [];
-      const cols = Math.ceil(width / spacing) + 2;
-      const rows = Math.ceil(height / spacing) + 2;
+      stamps = [];
+      const count = Math.max(55, Math.floor((width * height) / 22000));
+      const rand = createSeededRandom(42);
 
-      for (let c = 0; c < cols; c++) {
-        for (let r = 0; r < rows; r++) {
-          const originX = (c - 0.5) * spacing;
-          const originY = (r - 0.5) * spacing;
-          // Alternate between cross (+), ring (o), and solid dot for an authentic risograph print look
-          const type = (c + r) % 3 === 0 ? 'cross' : (c + r) % 3 === 1 ? 'ring' : 'dot';
-          nodes.push({
-            originX,
-            originY,
-            x: originX,
-            y: originY,
-            type,
-            baseSize: type === 'cross' ? 4.5 : type === 'ring' ? 4 : 3,
-            size: type === 'cross' ? 4.5 : type === 'ring' ? 4 : 3
-          });
-        }
+      for (let i = 0; i < count; i++) {
+        // Organic, messy scattered positions across and slightly off the viewport
+        const originX = (rand() * 1.15 - 0.08) * width;
+        const originY = (rand() * 1.15 - 0.08) * height;
+        
+        // Variations in size (18px to 54px)
+        const sizeCategory = rand();
+        let fontSize = 22;
+        if (sizeCategory < 0.25) fontSize = 16 + Math.floor(rand() * 6);
+        else if (sizeCategory < 0.7) fontSize = 26 + Math.floor(rand() * 12);
+        else fontSize = 42 + Math.floor(rand() * 16);
+
+        // Different rotations (-28deg to +32deg)
+        const baseAngle = (rand() - 0.5) * 1.1;
+
+        // Distinct blue ink opacities: visible, messy, sketchbook stamp look
+        const baseAlpha = 0.22 + rand() * 0.22; // 0.22 to 0.44
+
+        // Font style variation (italic, normal, uppercase vs lowercase)
+        const fontStyle = rand() > 0.4 ? 'italic' : 'normal';
+        const fontWeight = rand() > 0.5 ? '800' : '900';
+        const text = rand() > 0.12 ? 'rtoms' : 'RTOMS';
+
+        stamps.push({
+          originX,
+          originY,
+          x: originX,
+          y: originY,
+          baseAngle,
+          angle: baseAngle,
+          fontSize,
+          scale: 1,
+          baseAlpha,
+          alpha: baseAlpha,
+          fontStyle,
+          fontWeight,
+          text
+        });
       }
     };
 
-    initNodes();
+    initStamps();
 
     const handleResize = () => {
-      initNodes();
+      initStamps();
     };
 
     const handleMouseMove = (e) => {
@@ -76,86 +105,62 @@ export default function InteractiveBackground() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
-      time += 0.025;
+      time += 0.02;
       ctx.clearRect(0, 0, width, height);
 
       // Smooth mouse follow
-      mouse.x += (mouse.targetX - mouse.x) * 0.14;
-      mouse.y += (mouse.targetY - mouse.y) * 0.14;
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
 
-      // Draw clearly visible risograph blue grid lines
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(20, 85, 175, 0.22)';
-      ctx.beginPath();
-      for (let x = 0; x <= width; x += spacing * 2) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-      }
-      for (let y = 0; y <= height; y += spacing * 2) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-      }
-      ctx.stroke();
-
-      // Render physical reactive pattern marks (crosses, rings, dots)
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        const dx = mouse.x - node.originX;
-        const dy = mouse.y - node.originY;
+      for (let i = 0; i < stamps.length; i++) {
+        const s = stamps[i];
+        const dx = mouse.x - s.originX;
+        const dy = mouse.y - s.originY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        let targetX = node.originX;
-        let targetY = node.originY;
-        let currentSize = node.baseSize;
-        let currentAlpha = 0.52; // Crisp, clearly visible base opacity
-        let strokeColor = 'rgba(15, 75, 170, 0.52)';
+        let targetX = s.originX;
+        let targetY = s.originY;
+        let targetAngle = s.baseAngle;
+        let targetScale = 1;
+        let targetAlpha = s.baseAlpha;
 
         if (dist < mouse.radius) {
-          const force = (1 - dist / mouse.radius);
-          const angle = Math.atan2(dy, dx);
+          const force = 1 - dist / mouse.radius;
+          const angleToMouse = Math.atan2(dy, dx);
           
-          // Physical elastic distortion: wave ripple + push away
-          const ripple = Math.sin(dist * 0.06 - time * 2.5) * 5;
-          const push = force * 14 + ripple;
-
-          targetX = node.originX - Math.cos(angle) * push;
-          targetY = node.originY - Math.sin(angle) * push;
+          // Physical disturbance: gently push away and rotate
+          const push = force * 20;
+          targetX = s.originX - Math.cos(angleToMouse) * push;
+          targetY = s.originY - Math.sin(angleToMouse) * push;
           
-          currentSize = node.baseSize + force * 3.5;
-          currentAlpha = 0.52 + force * 0.45; // Intensifies to ~0.97 saturated cobalt blue
-          strokeColor = `rgba(0, 80, 220, ${currentAlpha})`;
+          targetAngle = s.baseAngle + (Math.sin(dist * 0.05 + time) * 0.25 * force);
+          targetScale = 1 + force * 0.18;
+          targetAlpha = Math.min(0.85, s.baseAlpha + force * 0.45); // Intensifies to vibrant cobalt blue
         } else {
-          // Gentle ambient breathing
-          targetX = node.originX + Math.sin(time + node.originY * 0.02) * 1.2;
-          targetY = node.originY + Math.cos(time + node.originX * 0.02) * 1.2;
+          // Gentle ambient float
+          targetX = s.originX + Math.sin(time + s.originY * 0.01) * 1.5;
+          targetY = s.originY + Math.cos(time + s.originX * 0.01) * 1.5;
         }
 
         // Spring ease
-        node.x += (targetX - node.x) * 0.18;
-        node.y += (targetY - node.y) * 0.18;
+        s.x += (targetX - s.x) * 0.14;
+        s.y += (targetY - s.y) * 0.14;
+        s.angle += (targetAngle - s.angle) * 0.14;
+        s.scale += (targetScale - s.scale) * 0.14;
+        s.alpha += (targetAlpha - s.alpha) * 0.14;
 
-        ctx.fillStyle = strokeColor;
-        ctx.strokeStyle = strokeColor;
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.angle);
+        ctx.scale(s.scale, s.scale);
 
-        if (node.type === 'cross') {
-          ctx.lineWidth = 1.8;
-          const s = currentSize;
-          ctx.beginPath();
-          ctx.moveTo(node.x - s, node.y);
-          ctx.lineTo(node.x + s, node.y);
-          ctx.moveTo(node.x, node.y - s);
-          ctx.lineTo(node.x, node.y + s);
-          ctx.stroke();
-        } else if (node.type === 'ring') {
-          ctx.lineWidth = 1.6;
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, currentSize, 0, Math.PI * 2);
-          ctx.stroke();
-        } else {
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, currentSize, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        ctx.font = `${s.fontStyle} ${s.fontWeight} ${s.fontSize}px 'Bricolage Grotesque', sans-serif`;
+        ctx.fillStyle = `rgba(14, 68, 160, ${s.alpha})`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(s.text, 0, 0);
+
+        ctx.restore();
       }
 
       animationFrameId = requestAnimationFrame(render);
