@@ -2,16 +2,12 @@ import React, { useEffect, useRef } from 'react';
 
 /**
  * InteractiveBackground:
- * Renders a continuous, organic wavy / amoeba / topographic contour pattern
- * directly matching the reference image:
- * - Thick, uniform-weight flowing bands, rounded curves, nested amoeba loops, and islands
- * - Continuous graphic composition covering the entire viewport and continuing beyond edges
- * - Tone-on-tone blue palette: soft baby blue base (#B5DCF8) with rich medium blue contours (#3273C4)
- *   and subtle lighter blue secondary bands (#5E9EE4)
- * - Zero typography, zero text, zero letters
- * - Continuous ultra-slow liquid deformation (smooth warping/stretching of the entire field)
- * - Soft concave gel/rubber cursor interaction (bends and ripples contour curves naturally)
- * - High-efficiency smooth scalar field evaluated at 60 FPS
+ * Renders a high-resolution, vector-smooth organic topographic pattern:
+ * - 100% DPR-aware vector Bézier curves (zero pixelation on Retina/1440p displays)
+ * - Soft, airy, light blue palette matching the Contact page aesthetic
+ * - Fewer bands, larger shapes, wider curves, and generous negative space (uncluttered)
+ * - Smooth continuous liquid deformation (waves gently undulate and breathe)
+ * - Soft concave gel/liquid cursor deflection (curves bend and ripple under touch)
  */
 export default function InteractiveBackground({ subtle = false }) {
   const canvasRef = useRef(null);
@@ -23,84 +19,230 @@ export default function InteractiveBackground({ subtle = false }) {
     if (!ctx) return;
 
     let animationFrameId;
-    let isVisible = true;
-
-    // Buffer dimensions for buttery smooth 60fps scalar field rendering
-    // Upscaled smoothly via canvas CSS interpolation
-    const bufferWidth = 480;
-    let bufferHeight = Math.round(bufferWidth * (window.innerHeight / window.innerWidth));
-    if (bufferHeight < 240) bufferHeight = 240;
-
-    canvas.width = bufferWidth;
-    canvas.height = bufferHeight;
-
-    let imageData = ctx.createImageData(bufferWidth, bufferHeight);
-    let data32 = new Uint32Array(imageData.data.buffer);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
     let mouse = {
-      x: -1,
-      y: -1,
-      targetX: -1,
-      targetY: -1,
-      intensity: 0,
-      targetIntensity: 0
+      x: -2000,
+      y: -2000,
+      targetX: -2000,
+      targetY: -2000,
+      radius: 220,
+      speed: 0
     };
 
-    let prevMouseX = -1;
-    let prevMouseY = -1;
+    let prevMouseX = -2000;
+    let prevMouseY = -2000;
     let time = 0;
+    let isVisible = true;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Topographic amoeba centers (hills and depressions creating nested loops & islands)
-    const centers = [
-      { baseX: 0.18, baseY: 0.35, strength: 2.3, spread: 45, phaseX: 0.4, phaseY: 1.2 },
-      { baseX: 0.82, baseY: 0.32, strength: -2.1, spread: 38, phaseX: 2.1, phaseY: 0.8 },
-      { baseX: 0.30, baseY: 0.62, strength: 2.4, spread: 42, phaseX: 3.5, phaseY: 2.7 },
-      { baseX: 0.72, baseY: 0.60, strength: 2.2, spread: 40, phaseX: 1.8, phaseY: 3.9 },
-      { baseX: 0.22, baseY: 0.84, strength: -1.9, spread: 50, phaseX: 4.2, phaseY: 1.5 },
-      { baseX: 0.84, baseY: 0.82, strength: 2.2, spread: 44, phaseX: 5.1, phaseY: 4.4 },
-      { baseX: 0.50, baseY: 0.16, strength: -1.8, spread: 48, phaseX: 0.9, phaseY: 2.3 }
-    ];
+    // Deterministic random
+    const createRandom = (seed) => {
+      let s = seed;
+      return () => {
+        s = Math.sin(s) * 10000;
+        return s - Math.floor(s);
+      };
+    };
 
-    // Color definitions (Packed 32-bit ABGR for maximum performance)
-    // Little-endian order: (A << 24) | (B << 16) | (G << 8) | R
-    const aMult = subtle ? 0.35 : 1.0;
+    let topographicLayers = [];
 
-    // Base: Soft baby blue (#B5DCF8) -> R: 181, G: 220, B: 248
-    const baseR = 181, baseG = 220, baseB = 248;
+    // Smooth cubic bezier spline through control points
+    const drawSmoothPath = (ctx, points, closed = false) => {
+      if (points.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
 
-    // Pattern 1: Noticeably darker medium blue (#3273C4) -> R: 50, G: 115, B: 196
-    const pat1R = Math.round(baseR * (1 - aMult) + 50 * aMult);
-    const pat1G = Math.round(baseG * (1 - aMult) + 115 * aMult);
-    const pat1B = Math.round(baseB * (1 - aMult) + 196 * aMult);
+      if (closed) {
+        const len = points.length;
+        for (let i = 0; i < len; i++) {
+          const p0 = points[(i - 1 + len) % len];
+          const p1 = points[i];
+          const p2 = points[(i + 1) % len];
+          const p3 = points[(i + 2) % len];
 
-    // Pattern 2: Secondary slightly lighter blue (#5E9EE4) -> R: 94, G: 158, B: 228
-    const pat2R = Math.round(baseR * (1 - aMult) + 94 * aMult);
-    const pat2G = Math.round(baseG * (1 - aMult) + 158 * aMult);
-    const pat2B = Math.round(baseB * (1 - aMult) + 228 * aMult);
+          const cp1x = p1.x + (p2.x - p0.x) / 5.5;
+          const cp1y = p1.y + (p2.y - p0.y) / 5.5;
+          const cp2x = p2.x - (p3.x - p1.x) / 5.5;
+          const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+
+          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+        }
+        ctx.closePath();
+      } else {
+        for (let i = 0; i < points.length - 1; i++) {
+          const p0 = i > 0 ? points[i - 1] : points[i];
+          const p1 = points[i];
+          const p2 = points[i + 1];
+          const p3 = i < points.length - 2 ? points[i + 2] : p2;
+
+          const cp1x = p1.x + (p2.x - p0.x) / 5.5;
+          const cp1y = p1.y + (p2.y - p0.y) / 5.5;
+          const cp2x = p2.x - (p3.x - p1.x) / 5.5;
+          const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+
+          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+        }
+      }
+    };
+
+    const initCanvas = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+
+      // High-resolution Retina/1440p vector canvas
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+
+      const rand = createRandom(5555);
+      topographicLayers = [];
+
+      // Wide, lush stroke width with ample negative space
+      const strokeW = Math.max(40, Math.min(62, width * 0.038));
+
+      // Soft, airy blue palette matching the Contact page
+      // Soft tone-on-tone: gentle, clean, airy, not psychedelic
+      const alphaBase = subtle ? 0.22 : 0.32;
+      const primaryColor = `rgba(70, 142, 226, ${alphaBase})`;
+      const secondaryColor = `rgba(105, 175, 245, ${alphaBase * 0.88})`;
+      const accentPebbleColor = `rgba(80, 152, 232, ${alphaBase * 0.95})`;
+
+      const makePoint = (x, y, amp = 16) => ({
+        baseX: x,
+        baseY: y,
+        ampX: amp + rand() * 8,
+        ampY: amp + rand() * 8,
+        speedX: 0.0002 + rand() * 0.0002,
+        speedY: 0.00018 + rand() * 0.0002,
+        phaseX: rand() * Math.PI * 2,
+        phaseY: rand() * Math.PI * 2
+      });
+
+      // 1. FEWER, WIDER SWEEPING HORIZONTAL RIVERS (Calm, broad curves)
+      // Only 4 sweeping waves across the entire canvas height
+      const riverYPositions = [
+        0.06 * height,
+        0.26 * height,
+        0.72 * height,
+        0.94 * height
+      ];
+
+      riverYPositions.forEach((baseY, idx) => {
+        const points = [];
+        const numSegments = 7; // fewer segments = wider, smoother, calmer curves
+        const stepX = (width * 1.35) / numSegments;
+        const startX = -0.18 * width;
+
+        for (let i = 0; i <= numSegments; i++) {
+          const x = startX + i * stepX;
+          const wave = Math.sin(i * 0.95 + idx * 1.8) * (height * 0.065) +
+                       Math.cos(i * 0.7 + idx) * (height * 0.035);
+          points.push(makePoint(x, baseY + wave, 18));
+        }
+
+        topographicLayers.push({
+          type: 'ribbon',
+          points,
+          closed: false,
+          strokeColor: idx % 2 === 0 ? primaryColor : secondaryColor,
+          strokeWidth: strokeW
+        });
+      });
+
+      // 2. LARGE, CALM AMOEBA CONTOUR LOOPS (Placed in generous negative spaces)
+      // Only 4 large, spacious organic loops
+      const loopConfigs = [
+        // Upper-left spacious loop + pebble
+        { cx: 0.13 * width, cy: 0.28 * height, rx: 0.12 * width, ry: 0.13 * height, nested: true, hasDot: true },
+        // Upper-right calm kidney loop
+        { cx: 0.88 * width, cy: 0.25 * height, rx: 0.11 * width, ry: 0.15 * height, nested: true, hasDot: false },
+        // Lower-left soft rounded oval
+        { cx: 0.15 * width, cy: 0.74 * height, rx: 0.13 * width, ry: 0.11 * height, nested: true, hasDot: true },
+        // Lower-right elongated contour ring
+        { cx: 0.86 * width, cy: 0.76 * height, rx: 0.12 * width, ry: 0.14 * height, nested: true, hasDot: true }
+      ];
+
+      loopConfigs.forEach((cfg, lIdx) => {
+        const numPts = 6;
+        const outerPoints = [];
+
+        for (let i = 0; i < numPts; i++) {
+          const theta = (i / numPts) * Math.PI * 2;
+          const jitter = 1 + (rand() - 0.5) * 0.28;
+          const px = cfg.cx + Math.cos(theta) * (cfg.rx * jitter);
+          const py = cfg.cy + Math.sin(theta) * (cfg.ry * jitter);
+          outerPoints.push(makePoint(px, py, 14));
+        }
+
+        topographicLayers.push({
+          type: 'amoeba',
+          points: outerPoints,
+          closed: true,
+          strokeColor: lIdx % 2 === 0 ? primaryColor : secondaryColor,
+          strokeWidth: strokeW
+        });
+
+        // Nested inner contour ring
+        if (cfg.nested) {
+          const innerPoints = [];
+          const innerScale = 0.52;
+          for (let i = 0; i < numPts; i++) {
+            const theta = (i / numPts) * Math.PI * 2;
+            const jitter = 1 + (rand() - 0.5) * 0.22;
+            const px = cfg.cx + Math.cos(theta) * (cfg.rx * innerScale * jitter);
+            const py = cfg.cy + Math.sin(theta) * (cfg.ry * innerScale * jitter);
+            innerPoints.push(makePoint(px, py, 10));
+          }
+
+          topographicLayers.push({
+            type: 'amoeba',
+            points: innerPoints,
+            closed: true,
+            strokeColor: secondaryColor,
+            strokeWidth: strokeW
+          });
+        }
+
+        // Center pebble dot
+        if (cfg.hasDot) {
+          topographicLayers.push({
+            type: 'dot',
+            center: makePoint(cfg.cx, cfg.cy, 10),
+            radius: strokeW * 0.45,
+            fillColor: accentPebbleColor
+          });
+        }
+      });
+    };
+
+    initCanvas();
 
     const handleResize = () => {
-      bufferHeight = Math.round(bufferWidth * (window.innerHeight / window.innerWidth));
-      if (bufferHeight < 240) bufferHeight = 240;
-      canvas.width = bufferWidth;
-      canvas.height = bufferHeight;
-      imageData = ctx.createImageData(bufferWidth, bufferHeight);
-      data32 = new Uint32Array(imageData.data.buffer);
+      initCanvas();
     };
 
     const handleMouseMove = (e) => {
-      mouse.targetX = e.clientX / window.innerWidth;
-      mouse.targetY = e.clientY / window.innerHeight;
-      mouse.targetIntensity = 1.0;
-
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
       const speed = Math.hypot(e.clientX - prevMouseX, e.clientY - prevMouseY);
+      mouse.speed = Math.min(2.0, mouse.speed * 0.85 + speed * 0.03);
       prevMouseX = e.clientX;
       prevMouseY = e.clientY;
     };
 
     const handleMouseLeave = () => {
-      mouse.targetIntensity = 0.0;
+      mouse.targetX = -2000;
+      mouse.targetY = -2000;
+      mouse.speed = 0;
     };
 
     const handleVisibilityChange = () => {
@@ -112,7 +254,9 @@ export default function InteractiveBackground({ subtle = false }) {
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Main 60fps render loop
+    // =========================================================================
+    // SMOOTH VECTOR FLUID RENDER LOOP
+    // =========================================================================
     const render = (timestamp) => {
       if (!isVisible) {
         animationFrameId = requestAnimationFrame(render);
@@ -120,92 +264,70 @@ export default function InteractiveBackground({ subtle = false }) {
       }
 
       time = prefersReducedMotion ? 0 : timestamp;
+      ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse spring
-      mouse.x += (mouse.targetX - mouse.x) * 0.12;
-      mouse.y += (mouse.targetY - mouse.y) * 0.12;
-      mouse.intensity += (mouse.targetIntensity - mouse.intensity) * 0.08;
+      // Smooth cursor follow
+      mouse.x += (mouse.targetX - mouse.x) * 0.14;
+      mouse.y += (mouse.targetY - mouse.y) * 0.14;
+      mouse.speed *= 0.94;
 
-      const t1 = time * 0.00018;
-      const t2 = time * 0.00022;
+      const lensRadius = mouse.radius;
 
-      // Calculate current drifting positions of amoeba centers
-      const liveCenters = centers.map((c) => ({
-        x: c.baseX + Math.sin(t1 + c.phaseX) * 0.025,
-        y: c.baseY + Math.cos(t2 + c.phaseY) * 0.025,
-        strength: c.strength * (1 + Math.sin(time * 0.0003 + c.phaseX) * 0.08),
-        spread: c.spread
-      }));
+      // Render vector paths
+      for (let l = 0; l < topographicLayers.length; l++) {
+        const layer = topographicLayers[l];
 
-      const aspect = bufferWidth / bufferHeight;
-      const mouseActive = mouse.intensity > 0.01 && mouse.x >= 0;
-      const mx = mouse.x;
-      const my = mouse.y;
-      const mDepth = 2.4 * mouse.intensity;
-      const mSpreadSq = 0.022; // localized concave indentation radius (~180px)
+        if (layer.type === 'dot') {
+          const pt = layer.center;
+          let px = pt.baseX + Math.sin(time * pt.speedX + pt.phaseX) * pt.ampX;
+          let py = pt.baseY + Math.cos(time * pt.speedY + pt.phaseY) * pt.ampY;
 
-      let ptr = 0;
+          const dx = px - mouse.x;
+          const dy = py - mouse.y;
+          const dist = Math.hypot(dx, dy);
 
-      for (let y = 0; y < bufferHeight; y++) {
-        const ny = y / bufferHeight;
-
-        for (let x = 0; x < bufferWidth; x++) {
-          const nx = x / bufferWidth;
-
-          // 1. Continuous flowing horizontal topographic wave field
-          let val = ny * 7.2 +
-                    Math.sin(nx * 5.2 + t1) * 0.95 +
-                    Math.cos(nx * 3.6 - ny * 2.4 + t2) * 0.72 +
-                    Math.sin((nx + ny) * 3.8 + t1 * 0.7) * 0.45;
-
-          // 2. Nested amoebas & closed contour loops (hills/valleys)
-          for (let i = 0; i < liveCenters.length; i++) {
-            const lc = liveCenters[i];
-            const dx = (nx - lc.x) * aspect;
-            const dy = ny - lc.y;
-            const distSq = dx * dx + dy * dy;
-            val += lc.strength / (1.0 + distSq * lc.spread);
+          if (dist < lensRadius && dist > 1) {
+            const norm = dist / lensRadius;
+            const push = Math.sin(norm * Math.PI) * (1 - norm) * (24 + mouse.speed * 10);
+            px += (dx / dist) * push;
+            py += (dy / dist) * push;
           }
 
-          // 3. Soft concave rubber/gel cursor indentation
-          if (mouseActive) {
-            const mdx = (nx - mx) * aspect;
-            const mdy = ny - my;
-            const mDistSq = mdx * mdx + mdy * mdy;
-            if (mDistSq < 0.08) {
-              val += mDepth * Math.exp(-mDistSq / (2 * mSpreadSq));
+          ctx.fillStyle = layer.fillColor;
+          ctx.beginPath();
+          ctx.arc(px, py, layer.radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          const deformedPoints = layer.points.map((pt) => {
+            let px = pt.baseX + Math.sin(time * pt.speedX + pt.phaseX) * pt.ampX +
+                     Math.cos(time * pt.speedY * 0.8 + pt.phaseY) * (pt.ampX * 0.4);
+            let py = pt.baseY + Math.cos(time * pt.speedY + pt.phaseY) * pt.ampY +
+                     Math.sin(time * pt.speedX * 0.8 + pt.phaseX) * (pt.ampY * 0.4);
+
+            const dx = px - mouse.x;
+            const dy = py - mouse.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < lensRadius && dist > 1) {
+              const norm = dist / lensRadius;
+              const push = Math.sin(norm * Math.PI) * (1 - norm) * (26 + mouse.speed * 12);
+              px += (dx / dist) * push;
+              py += (dy / dist) * push;
             }
-          }
 
-          // 4. Alternating contour bands (sinusoidal isocontour mapping)
-          const s = Math.sin(val * Math.PI);
+            return { x: px, y: py };
+          });
 
-          // Smooth antialiased band edge transition
-          // When s > 0, pattern band; when s <= 0, base baby blue
-          const factor = Math.max(0, Math.min(1, 0.5 + s * 3.8));
+          ctx.strokeStyle = layer.strokeColor;
+          ctx.lineWidth = layer.strokeWidth;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
 
-          let r = baseR;
-          let g = baseG;
-          let b = baseB;
-
-          if (factor > 0) {
-            // Secondary variation: alternate between Pattern 1 and Pattern 2 based on contour level
-            const isSecondary = Math.floor(val) % 2 !== 0;
-            const targetR = isSecondary ? pat2R : pat1R;
-            const targetG = isSecondary ? pat2G : pat1G;
-            const targetB = isSecondary ? pat2B : pat1B;
-
-            r = Math.round(baseR * (1 - factor) + targetR * factor);
-            g = Math.round(baseG * (1 - factor) + targetG * factor);
-            b = Math.round(baseB * (1 - factor) + targetB * factor);
-          }
-
-          // Packed 32-bit pixel: (255 << 24) | (b << 16) | (g << 8) | r
-          data32[ptr++] = (255 << 24) | (b << 16) | (g << 8) | r;
+          drawSmoothPath(ctx, deformedPoints, layer.closed);
+          ctx.stroke();
         }
       }
 
-      ctx.putImageData(imageData, 0, 0);
       animationFrameId = requestAnimationFrame(render);
     };
 

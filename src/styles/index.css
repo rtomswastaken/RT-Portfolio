@@ -197,20 +197,22 @@ a {
 
 /* ==========================================================================
    01: HERO POSTER SECTION — PURE VISUAL POSTER
-   Layer 1: Messy rtoms pattern
-   Layer 2: Colossal RICHARDSEN THOMAS
-   Layer 3: Massive Mascot centered right over the middle of the text
-   Layer 4: Glass Nav
+   Layer 1: Light Baby Blue Background
+   Layer 2: Smooth Organic Blue Topographic Pattern
+   Layer 3: Colossal RICHARDSEN THOMAS
+   Layer 4: Massive Mascot Anchored at the Bottom
+   Layer 5: Frosted Glass Nav
    ========================================================================== */
 .hero-section {
   position: relative;
   min-height: 100vh;
   height: 100vh;
-  min-height: 780px;
+  min-height: 820px;
   padding: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: transparent;
   overflow: hidden;
   z-index: 2;
@@ -221,16 +223,18 @@ a {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
 }
 
-/* Layer 2: Giant Richardsen Thomas Display Typography */
+/* Layer 3: Giant Richardsen Thomas Display Typography */
 .hero-typography-layer {
   position: relative;
   z-index: 2;
   width: 100%;
+  padding-top: clamp(4.5rem, 8.5vh, 7.5rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -240,9 +244,9 @@ a {
 .hero-colossal-name {
   font-family: var(--font-quirky);
   font-weight: 900;
-  font-size: clamp(5.6rem, 18.5vw, 19.5rem);
-  line-height: 0.78;
-  letter-spacing: -0.05em;
+  font-size: clamp(7rem, 20vw, 24rem);
+  line-height: 0.76;
+  letter-spacing: -0.055em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -252,29 +256,29 @@ a {
 
 .name-line-first {
   display: block;
-  transform: rotate(-0.8deg);
+  transform: rotate(-0.6deg);
   color: var(--ink-midnight);
 }
 
 .name-line-second {
   display: block;
-  transform: rotate(1deg);
+  transform: rotate(0.8deg);
   color: var(--accent-cobalt);
-  margin-top: -0.06em;
+  margin-top: -0.08em;
 }
 
-/* Layer 3: Massive 3D Mascot positioned DIRECTLY OVER the middle of the text */
+/* Layer 4: Massive 3D Mascot positioned at the bottom */
 .hero-mascot-dominant-layer {
   position: absolute;
-  top: 50%;
+  bottom: 0;
   left: 50%;
-  transform: translate(-50%, -46%);
+  transform: translateX(-50%);
   z-index: 10;
-  width: clamp(380px, 44vw, 680px);
-  height: clamp(500px, 68vh, 840px);
+  width: clamp(520px, 56vw, 920px);
+  height: clamp(580px, 74vh, 920px);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   pointer-events: none;
 }
 
@@ -282,16 +286,17 @@ a {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: bottom center;
   display: block;
-  filter: drop-shadow(0 30px 60px rgba(4, 18, 40, 0.35));
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
-  mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
-  animation: heroMascotFloat 5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 25px 50px rgba(4, 18, 40, 0.28));
+  -webkit-mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
+  animation: heroMascotFloat 6s ease-in-out infinite alternate;
 }
 
 @keyframes heroMascotFloat {
   0% { transform: translateY(0px) rotate(0deg); }
-  100% { transform: translateY(-10px) rotate(-1deg); }
+  100% { transform: translateY(-8px) rotate(-0.8deg); }
 }
 
 /* ==========================================================================
@@ -1415,27 +1420,30 @@ a {
    ========================================================================== */
 @media (max-width: 900px) {
   .hero-section {
-    min-height: 80vh;
+    min-height: 85vh;
     height: auto;
-    padding-top: 100px;
-    padding-bottom: 60px;
+    padding-top: 90px;
+    padding-bottom: 20px;
+  }
+  .hero-typography-layer {
+    padding-top: 1rem;
   }
   .hero-colossal-name {
-    font-size: clamp(3.8rem, 16vw, 7rem);
+    font-size: clamp(4.5rem, 18vw, 8rem);
   }
   .hero-mascot-dominant-layer {
     position: relative;
-    top: auto;
+    bottom: auto;
     left: auto;
     transform: none !important;
     margin: -1.5rem auto 0;
-    width: 90%;
-    max-width: 360px;
+    width: 95%;
+    max-width: 460px;
     height: auto;
   }
   .hero-colossal-mascot-img {
     height: auto;
-    max-height: 480px;
+    max-height: 520px;
   }
   .about-zine-spread {
     grid-template-columns: 1fr;
