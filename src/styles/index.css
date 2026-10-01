@@ -932,6 +932,8 @@ a {
 }
 
 .contact-main-content {
+  position: relative;
+  z-index: 10;
   padding-top: clamp(3rem, 6vh, 5rem);
 }
 

@@ -2,14 +2,16 @@ import React, { useEffect, useRef } from 'react';
 
 /**
  * InteractiveBackground:
- * Renders an abstract organic shape pattern inspired by playful graphic design systems:
- * - Completely non-overlapping, spaced shapes (irregular blobs, capsules, soft circles,
- *   curved ribbons, organic squiggles, abstract arches, small dots, thin curved lines).
- * - Enforces strict collision / spacing logic so every shape has clear breathing room.
- * - Absolutely NO text, letters, words, or typography.
- * - Tonal variations of pure blue (baby blue base, soft navy / medium sky blue shapes).
- * - Continuous, ultra-slow organic fluid motion (suspended in thick liquid).
- * - Soft concave / liquid lens cursor interaction with smooth spring return.
+ * Renders a continuous, organic wavy / amoeba / topographic contour pattern
+ * directly matching the reference image:
+ * - Thick, uniform-weight flowing bands, rounded curves, nested amoeba loops, and islands
+ * - Continuous graphic composition covering the entire viewport and continuing beyond edges
+ * - Tone-on-tone blue palette: soft baby blue base (#B5DCF8) with rich medium blue contours (#3273C4)
+ *   and subtle lighter blue secondary bands (#5E9EE4)
+ * - Zero typography, zero text, zero letters
+ * - Continuous ultra-slow liquid deformation (smooth warping/stretching of the entire field)
+ * - Soft concave gel/rubber cursor interaction (bends and ripples contour curves naturally)
+ * - High-efficiency smooth scalar field evaluated at 60 FPS
  */
 export default function InteractiveBackground({ subtle = false }) {
   const canvasRef = useRef(null);
@@ -21,277 +23,84 @@ export default function InteractiveBackground({ subtle = false }) {
     if (!ctx) return;
 
     let animationFrameId;
-    let dpr = window.devicePixelRatio || 1;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    let isVisible = true;
+
+    // Buffer dimensions for buttery smooth 60fps scalar field rendering
+    // Upscaled smoothly via canvas CSS interpolation
+    const bufferWidth = 480;
+    let bufferHeight = Math.round(bufferWidth * (window.innerHeight / window.innerWidth));
+    if (bufferHeight < 240) bufferHeight = 240;
+
+    canvas.width = bufferWidth;
+    canvas.height = bufferHeight;
+
+    let imageData = ctx.createImageData(bufferWidth, bufferHeight);
+    let data32 = new Uint32Array(imageData.data.buffer);
 
     let mouse = {
-      x: -2000,
-      y: -2000,
-      targetX: -2000,
-      targetY: -2000,
-      radius: 180,
-      speed: 0
+      x: -1,
+      y: -1,
+      targetX: -1,
+      targetY: -1,
+      intensity: 0,
+      targetIntensity: 0
     };
 
-    let prevMouseX = -2000;
-    let prevMouseY = -2000;
+    let prevMouseX = -1;
+    let prevMouseY = -1;
     let time = 0;
-    let isVisible = true;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Deterministic PRNG
-    const createRandom = (seed) => {
-      let s = seed;
-      return () => {
-        s = Math.sin(s) * 10000;
-        return s - Math.floor(s);
-      };
-    };
+    // Topographic amoeba centers (hills and depressions creating nested loops & islands)
+    const centers = [
+      { baseX: 0.18, baseY: 0.35, strength: 2.3, spread: 45, phaseX: 0.4, phaseY: 1.2 },
+      { baseX: 0.82, baseY: 0.32, strength: -2.1, spread: 38, phaseX: 2.1, phaseY: 0.8 },
+      { baseX: 0.30, baseY: 0.62, strength: 2.4, spread: 42, phaseX: 3.5, phaseY: 2.7 },
+      { baseX: 0.72, baseY: 0.60, strength: 2.2, spread: 40, phaseX: 1.8, phaseY: 3.9 },
+      { baseX: 0.22, baseY: 0.84, strength: -1.9, spread: 50, phaseX: 4.2, phaseY: 1.5 },
+      { baseX: 0.84, baseY: 0.82, strength: 2.2, spread: 44, phaseX: 5.1, phaseY: 4.4 },
+      { baseX: 0.50, baseY: 0.16, strength: -1.8, spread: 48, phaseX: 0.9, phaseY: 2.3 }
+    ];
 
-    let shapes = [];
+    // Color definitions (Packed 32-bit ABGR for maximum performance)
+    // Little-endian order: (A << 24) | (B << 16) | (G << 8) | R
+    const aMult = subtle ? 0.35 : 1.0;
 
-    // =========================================================================
-    // ABSTRACT ORGANIC SHAPE DRAWERS (No typography, pure graphic forms)
-    // =========================================================================
+    // Base: Soft baby blue (#B5DCF8) -> R: 181, G: 220, B: 248
+    const baseR = 181, baseG = 220, baseB = 248;
 
-    // 1. Irregular Organic Blob (Smooth harmonic radial boundary)
-    const drawBlob = (ctx, s, wave) => {
-      const r = s.size * 0.45;
-      const numPoints = 6;
-      ctx.beginPath();
-      for (let i = 0; i <= numPoints; i++) {
-        const theta = (i / numPoints) * Math.PI * 2;
-        // Subtle harmonic variation for a natural pebble / liquid droplet shape
-        const radius = r * (1 + 0.16 * Math.sin(theta * 3 + wave + s.phaseW) + 0.1 * Math.cos(theta * 2 + s.phaseR));
-        const px = Math.cos(theta) * radius;
-        const py = Math.sin(theta) * radius;
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-      ctx.fill();
-    };
+    // Pattern 1: Noticeably darker medium blue (#3273C4) -> R: 50, G: 115, B: 196
+    const pat1R = Math.round(baseR * (1 - aMult) + 50 * aMult);
+    const pat1G = Math.round(baseG * (1 - aMult) + 115 * aMult);
+    const pat1B = Math.round(baseB * (1 - aMult) + 196 * aMult);
 
-    // 2. Rounded Capsule / Stadium Pill
-    const drawCapsule = (ctx, s, wave) => {
-      const w = s.size * 0.65;
-      const h = s.size * 0.32;
-      const r = h / 2;
-      ctx.beginPath();
-      ctx.moveTo(-w / 2 + r, -h / 2);
-      ctx.lineTo(w / 2 - r, -h / 2);
-      ctx.arc(w / 2 - r, 0, r, -Math.PI / 2, Math.PI / 2);
-      ctx.lineTo(-w / 2 + r, h / 2);
-      ctx.arc(-w / 2 + r, 0, r, Math.PI / 2, -Math.PI / 2);
-      ctx.closePath();
-      ctx.fill();
-    };
-
-    // 3. Curved Ribbon / Noodle
-    const drawCurvedRibbon = (ctx, s, wave) => {
-      const len = s.size * 0.45;
-      const bend = (s.size * 0.22) + wave * 8;
-      ctx.beginPath();
-      ctx.moveTo(-len, -bend * 0.5);
-      ctx.bezierCurveTo(-len * 0.3, bend, len * 0.3, -bend, len, bend * 0.5);
-      ctx.stroke();
-    };
-
-    // 4. Organic Squiggle (Wavy tubular stroke)
-    const drawSquiggle = (ctx, s, wave) => {
-      const len = s.size * 0.48;
-      const amp = s.size * 0.18 + wave * 6;
-      ctx.beginPath();
-      ctx.moveTo(-len, 0);
-      ctx.bezierCurveTo(-len * 0.5, -amp, -len * 0.2, amp, 0, 0);
-      ctx.bezierCurveTo(len * 0.2, -amp, len * 0.5, amp, len, 0);
-      ctx.stroke();
-    };
-
-    // 5. Soft Circle / Oval Pebble
-    const drawSoftCircle = (ctx, s, wave) => {
-      const rx = s.size * 0.36;
-      const ry = s.size * (0.36 + wave * 0.05);
-      ctx.beginPath();
-      ctx.ellipse(0, 0, Math.max(10, rx), Math.max(10, ry), 0, 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    // 6. Abstract Rounded Arch (Inverted U / Tunnel)
-    const drawArch = (ctx, s, wave) => {
-      const w = s.size * 0.35;
-      const h = s.size * 0.42;
-      const bend = wave * 6;
-      ctx.beginPath();
-      ctx.moveTo(-w, h * 0.5);
-      ctx.lineTo(-w, -h * 0.2);
-      ctx.bezierCurveTo(-w, -h - bend, w, -h - bend, w, -h * 0.2);
-      ctx.lineTo(w, h * 0.5);
-      ctx.stroke();
-    };
-
-    // 7. Small Floating Dot (Accents)
-    const drawDot = (ctx, s) => {
-      const r = s.size * 0.22;
-      ctx.beginPath();
-      ctx.arc(0, 0, Math.max(7, r), 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    // 8. Thin Curved Line (Fine graphic arc)
-    const drawThinArc = (ctx, s, wave) => {
-      const r = s.size * 0.42;
-      const startAngle = s.phaseW;
-      const endAngle = startAngle + Math.PI * 0.85 + wave * 0.2;
-      ctx.beginPath();
-      ctx.arc(0, 0, r, startAngle, endAngle);
-      ctx.stroke();
-    };
-
-    // =========================================================================
-    // NON-OVERLAPPING POSITIONING ENGINE (Collision / Spacing Logic)
-    // =========================================================================
-    const initCanvas = () => {
-      dpr = window.devicePixelRatio || 1;
-      width = window.innerWidth;
-      height = window.innerHeight;
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.scale(dpr, dpr);
-
-      shapes = [];
-      const rand = createRandom(8888);
-
-      // Tonal variations of pure blue over baby blue (#B5DCF8)
-      const a = subtle ? 0.35 : 1.0;
-      const colorSchemes = [
-        // Slightly darker blue (primary)
-        { stroke: `rgba(75, 142, 218, ${0.46 * a})`, fill: `rgba(75, 142, 218, ${0.46 * a})`, isStroke: false },
-        // Mid sky blue
-        { stroke: `rgba(95, 160, 230, ${0.42 * a})`, fill: `rgba(95, 160, 230, ${0.42 * a})`, isStroke: false },
-        // Deep accent blue
-        { stroke: `rgba(58, 126, 206, ${0.44 * a})`, fill: `rgba(58, 126, 206, ${0.44 * a})`, isStroke: false },
-        // Subtle lighter blue
-        { stroke: `rgba(175, 218, 252, ${0.55 * a})`, fill: `rgba(175, 218, 252, ${0.55 * a})`, isStroke: false },
-        // Outlined curved ribbons & arches
-        { stroke: `rgba(70, 138, 215, ${0.48 * a})`, fill: `rgba(70, 138, 215, ${0.48 * a})`, isStroke: true },
-        // Thin graphic line
-        { stroke: `rgba(50, 118, 198, ${0.36 * a})`, fill: `rgba(50, 118, 198, ${0.36 * a})`, isStroke: true, thin: true }
-      ];
-
-      const shapeTypes = ['blob', 'capsule', 'ribbon', 'squiggle', 'circle', 'arch', 'dot', 'thinArc'];
-
-      // Target shape count balanced across screen area
-      // Roughly 1 shape per 42,000 px^2 (e.g., 28-34 shapes on desktop)
-      const targetCount = Math.max(20, Math.min(38, Math.floor((width * height) / 42000)));
-
-      // Placed shapes list for collision testing
-      const placedCircles = [];
-
-      // Minimum guaranteed breathing room between shape bounds
-      const minBreathingGap = 38;
-
-      let attempts = 0;
-      const maxTotalAttempts = 1500;
-
-      while (placedCircles.length < targetCount && attempts < maxTotalAttempts) {
-        attempts++;
-
-        // Random shape type
-        const typeIndex = Math.floor(rand() * shapeTypes.length);
-        const type = shapeTypes[typeIndex];
-
-        // Diverse size categories: small dots (30-45px), medium (75-120px), prominent blobs (130-190px)
-        let size;
-        if (type === 'dot') {
-          size = 32 + rand() * 22; // 32 - 54px
-        } else if (type === 'thinArc') {
-          size = 90 + rand() * 60; // 90 - 150px
-        } else if (rand() > 0.72) {
-          size = 135 + rand() * 55; // 135 - 190px (prominent organic blob / capsule)
-        } else {
-          size = 70 + rand() * 55;  // 70 - 125px (medium organic forms)
-        }
-
-        // Bounding radius for collision
-        const boundRadius = size * 0.52;
-
-        // Position across canvas with slight margin bleeding
-        const x = (rand() * 1.08 - 0.04) * width;
-        const y = (rand() * 1.08 - 0.04) * height;
-
-        // Check collision against all already placed shapes
-        let collides = false;
-        for (let j = 0; j < placedCircles.length; j++) {
-          const other = placedCircles[j];
-          const dist = Math.hypot(x - other.x, y - other.y);
-          const requiredDist = boundRadius + other.radius + minBreathingGap;
-
-          if (dist < requiredDist) {
-            collides = true;
-            break;
-          }
-        }
-
-        if (!collides) {
-          // Accepted! Register placement
-          placedCircles.push({ x, y, radius: boundRadius });
-
-          const colorScheme = colorSchemes[Math.floor(rand() * colorSchemes.length)];
-          const strokeWidth = colorScheme.thin ? Math.max(2.5, size * 0.035) : Math.max(14, size * 0.22);
-
-          shapes.push({
-            id: shapes.length,
-            type,
-            size,
-            strokeWidth,
-            color: colorScheme,
-            baseX: x,
-            baseY: y,
-            baseRot: (rand() - 0.5) * Math.PI * 2,
-            baseScale: 1,
-            // Fluid drifting physics: very small amplitudes (10-18px) to preserve breathing room!
-            driftAmpX: 10 + rand() * 10,
-            driftAmpY: 8 + rand() * 10,
-            speedX: 0.00025 + rand() * 0.0003,
-            speedY: 0.0002 + rand() * 0.00025,
-            phaseX: rand() * Math.PI * 2,
-            phaseY: rand() * Math.PI * 2,
-            phaseS: rand() * Math.PI * 2,
-            phaseR: rand() * Math.PI * 2,
-            phaseW: rand() * Math.PI * 2,
-            stretchFreq: 0.00035 + rand() * 0.0003,
-            stretchAmp: 0.05 + rand() * 0.04,
-            rotFreq: 0.0002 + rand() * 0.0002
-          });
-        }
-      }
-    };
-
-    initCanvas();
+    // Pattern 2: Secondary slightly lighter blue (#5E9EE4) -> R: 94, G: 158, B: 228
+    const pat2R = Math.round(baseR * (1 - aMult) + 94 * aMult);
+    const pat2G = Math.round(baseG * (1 - aMult) + 158 * aMult);
+    const pat2B = Math.round(baseB * (1 - aMult) + 228 * aMult);
 
     const handleResize = () => {
-      initCanvas();
+      bufferHeight = Math.round(bufferWidth * (window.innerHeight / window.innerWidth));
+      if (bufferHeight < 240) bufferHeight = 240;
+      canvas.width = bufferWidth;
+      canvas.height = bufferHeight;
+      imageData = ctx.createImageData(bufferWidth, bufferHeight);
+      data32 = new Uint32Array(imageData.data.buffer);
     };
 
     const handleMouseMove = (e) => {
-      mouse.targetX = e.clientX;
-      mouse.targetY = e.clientY;
+      mouse.targetX = e.clientX / window.innerWidth;
+      mouse.targetY = e.clientY / window.innerHeight;
+      mouse.targetIntensity = 1.0;
+
       const speed = Math.hypot(e.clientX - prevMouseX, e.clientY - prevMouseY);
-      mouse.speed = Math.min(2.0, mouse.speed * 0.85 + speed * 0.03);
       prevMouseX = e.clientX;
       prevMouseY = e.clientY;
     };
 
     const handleMouseLeave = () => {
-      mouse.targetX = -2000;
-      mouse.targetY = -2000;
-      mouse.speed = 0;
+      mouse.targetIntensity = 0.0;
     };
 
     const handleVisibilityChange = () => {
@@ -303,9 +112,7 @@ export default function InteractiveBackground({ subtle = false }) {
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // =========================================================================
-    // MAIN FLUID RENDER LOOP (Underwater suspended physics + Concave lens)
-    // =========================================================================
+    // Main 60fps render loop
     const render = (timestamp) => {
       if (!isVisible) {
         animationFrameId = requestAnimationFrame(render);
@@ -313,99 +120,92 @@ export default function InteractiveBackground({ subtle = false }) {
       }
 
       time = prefersReducedMotion ? 0 : timestamp;
-      ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse follow
-      mouse.x += (mouse.targetX - mouse.x) * 0.14;
-      mouse.y += (mouse.targetY - mouse.y) * 0.14;
-      mouse.speed *= 0.94;
+      // Smooth mouse spring
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+      mouse.intensity += (mouse.targetIntensity - mouse.intensity) * 0.08;
 
-      const lensRadius = mouse.radius;
+      const t1 = time * 0.00018;
+      const t2 = time * 0.00022;
 
-      for (let i = 0; i < shapes.length; i++) {
-        const s = shapes[i];
+      // Calculate current drifting positions of amoeba centers
+      const liveCenters = centers.map((c) => ({
+        x: c.baseX + Math.sin(t1 + c.phaseX) * 0.025,
+        y: c.baseY + Math.cos(t2 + c.phaseY) * 0.025,
+        strength: c.strength * (1 + Math.sin(time * 0.0003 + c.phaseX) * 0.08),
+        spread: c.spread
+      }));
 
-        // 1. Slow, organic fluid drift
-        let curX = s.baseX + Math.sin(time * s.speedX + s.phaseX) * s.driftAmpX +
-                   Math.cos(time * s.speedY * 0.75 + s.phaseY) * (s.driftAmpX * 0.35);
-        let curY = s.baseY + Math.cos(time * s.speedY + s.phaseY) * s.driftAmpY +
-                   Math.sin(time * s.speedX * 0.8 + s.phaseX) * (s.driftAmpY * 0.35);
+      const aspect = bufferWidth / bufferHeight;
+      const mouseActive = mouse.intensity > 0.01 && mouse.x >= 0;
+      const mx = mouse.x;
+      const my = mouse.y;
+      const mDepth = 2.4 * mouse.intensity;
+      const mSpreadSq = 0.022; // localized concave indentation radius (~180px)
 
-        // 2. Liquid stretching, bending, and breathing
-        let scaleX = s.baseScale * (1 + Math.sin(time * s.stretchFreq + s.phaseS) * s.stretchAmp);
-        let scaleY = s.baseScale * (1 + Math.cos(time * s.stretchFreq * 0.9 + s.phaseS + 1.2) * s.stretchAmp);
-        let rot = s.baseRot + Math.sin(time * s.rotFreq + s.phaseR) * 0.06;
-        let wave = Math.sin(time * 0.0006 + s.phaseW);
+      let ptr = 0;
 
-        // 3. Soft Concave Lens / Fluid Cursor Push
-        const dx = curX - mouse.x;
-        const dy = curY - mouse.y;
-        const dist = Math.hypot(dx, dy);
+      for (let y = 0; y < bufferHeight; y++) {
+        const ny = y / bufferHeight;
 
-        if (dist < lensRadius && dist > 1) {
-          const normDist = dist / lensRadius; // 0 at cursor, 1 at rim
+        for (let x = 0; x < bufferWidth; x++) {
+          const nx = x / bufferWidth;
 
-          // Smooth concave depression: gently sinks inward and eases outward
-          const depression = Math.sin(normDist * Math.PI) * (1 - normDist);
-          const pushForce = depression * (24 + mouse.speed * 12);
+          // 1. Continuous flowing horizontal topographic wave field
+          let val = ny * 7.2 +
+                    Math.sin(nx * 5.2 + t1) * 0.95 +
+                    Math.cos(nx * 3.6 - ny * 2.4 + t2) * 0.72 +
+                    Math.sin((nx + ny) * 3.8 + t1 * 0.7) * 0.45;
 
-          curX += (dx / dist) * pushForce;
-          curY += (dy / dist) * pushForce;
+          // 2. Nested amoebas & closed contour loops (hills/valleys)
+          for (let i = 0; i < liveCenters.length; i++) {
+            const lc = liveCenters[i];
+            const dx = (nx - lc.x) * aspect;
+            const dy = ny - lc.y;
+            const distSq = dx * dx + dy * dy;
+            val += lc.strength / (1.0 + distSq * lc.spread);
+          }
 
-          // Local compression under the lens
-          const compression = 1 - (1 - normDist) * 0.14;
-          scaleX *= compression;
-          scaleY *= compression;
+          // 3. Soft concave rubber/gel cursor indentation
+          if (mouseActive) {
+            const mdx = (nx - mx) * aspect;
+            const mdy = ny - my;
+            const mDistSq = mdx * mdx + mdy * mdy;
+            if (mDistSq < 0.08) {
+              val += mDepth * Math.exp(-mDistSq / (2 * mSpreadSq));
+            }
+          }
 
-          // Gentle fluid rotational swirl
-          rot += (1 - normDist) * 0.12 * Math.sin(time * 0.002 + s.phaseR);
-          wave += (1 - normDist) * 0.25;
+          // 4. Alternating contour bands (sinusoidal isocontour mapping)
+          const s = Math.sin(val * Math.PI);
+
+          // Smooth antialiased band edge transition
+          // When s > 0, pattern band; when s <= 0, base baby blue
+          const factor = Math.max(0, Math.min(1, 0.5 + s * 3.8));
+
+          let r = baseR;
+          let g = baseG;
+          let b = baseB;
+
+          if (factor > 0) {
+            // Secondary variation: alternate between Pattern 1 and Pattern 2 based on contour level
+            const isSecondary = Math.floor(val) % 2 !== 0;
+            const targetR = isSecondary ? pat2R : pat1R;
+            const targetG = isSecondary ? pat2G : pat1G;
+            const targetB = isSecondary ? pat2B : pat1B;
+
+            r = Math.round(baseR * (1 - factor) + targetR * factor);
+            g = Math.round(baseG * (1 - factor) + targetG * factor);
+            b = Math.round(baseB * (1 - factor) + targetB * factor);
+          }
+
+          // Packed 32-bit pixel: (255 << 24) | (b << 16) | (g << 8) | r
+          data32[ptr++] = (255 << 24) | (b << 16) | (g << 8) | r;
         }
-
-        // 4. Render the graphic shape
-        ctx.save();
-        ctx.translate(curX, curY);
-        ctx.rotate(rot);
-        ctx.scale(scaleX, scaleY);
-
-        ctx.strokeStyle = s.color.stroke;
-        ctx.fillStyle = s.color.fill;
-        ctx.lineWidth = s.strokeWidth;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-
-        switch (s.type) {
-          case 'blob':
-            drawBlob(ctx, s, wave);
-            break;
-          case 'capsule':
-            drawCapsule(ctx, s, wave);
-            break;
-          case 'ribbon':
-            drawCurvedRibbon(ctx, s, wave);
-            break;
-          case 'squiggle':
-            drawSquiggle(ctx, s, wave);
-            break;
-          case 'circle':
-            drawSoftCircle(ctx, s, wave);
-            break;
-          case 'arch':
-            drawArch(ctx, s, wave);
-            break;
-          case 'dot':
-            drawDot(ctx, s);
-            break;
-          case 'thinArc':
-            drawThinArc(ctx, s, wave);
-            break;
-          default:
-            drawBlob(ctx, s, wave);
-        }
-
-        ctx.restore();
       }
 
+      ctx.putImageData(imageData, 0, 0);
       animationFrameId = requestAnimationFrame(render);
     };
 
