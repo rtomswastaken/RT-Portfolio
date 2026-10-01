@@ -10,115 +10,152 @@ export default function InteractiveBackground() {
     if (!ctx) return;
 
     let animationFrameId;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let dpr = window.devicePixelRatio || 1;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
     // Mouse coordinates (default off-screen)
-    let mouse = { x: -1000, y: -1000, radius: 130 };
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, radius: 200 };
+    let time = 0;
 
-    const spacing = 34;
-    let dots = [];
+    const spacing = 48;
+    let nodes = [];
 
-    const initDots = () => {
-      dots = [];
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      
-      const cols = Math.ceil(width / spacing) + 1;
-      const rows = Math.ceil(height / spacing) + 1;
+    const initNodes = () => {
+      dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.scale(dpr, dpr);
+
+      nodes = [];
+      const cols = Math.ceil(width / spacing) + 2;
+      const rows = Math.ceil(height / spacing) + 2;
 
       for (let c = 0; c < cols; c++) {
         for (let r = 0; r < rows; r++) {
-          const originX = c * spacing;
-          const originY = r * spacing;
-          dots.push({
+          const originX = (c - 0.5) * spacing;
+          const originY = (r - 0.5) * spacing;
+          // Alternate between cross (+), ring (o), and solid dot for an authentic risograph print look
+          const type = (c + r) % 3 === 0 ? 'cross' : (c + r) % 3 === 1 ? 'ring' : 'dot';
+          nodes.push({
             originX,
             originY,
             x: originX,
             y: originY,
-            size: 1.6,
-            baseAlpha: 0.14
+            type,
+            baseSize: type === 'cross' ? 4.5 : type === 'ring' ? 4 : 3,
+            size: type === 'cross' ? 4.5 : type === 'ring' ? 4 : 3
           });
         }
       }
     };
 
-    initDots();
+    initNodes();
 
     const handleResize = () => {
-      initDots();
-      if (isTouch) {
-        drawStatic();
-      }
+      initNodes();
     };
 
     const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
     };
 
     const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
     };
-
-    const drawStatic = () => {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = 'rgba(28, 86, 160, 0.12)';
-      for (let i = 0; i < dots.length; i++) {
-        const d = dots[i];
-        ctx.beginPath();
-        ctx.arc(d.originX, d.originY, 1.4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    };
-
-    if (isTouch) {
-      drawStatic();
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }
 
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
 
     const render = () => {
+      time += 0.025;
       ctx.clearRect(0, 0, width, height);
 
-      for (let i = 0; i < dots.length; i++) {
-        const dot = dots[i];
-        const dx = mouse.x - dot.originX;
-        const dy = mouse.y - dot.originY;
+      // Smooth mouse follow
+      mouse.x += (mouse.targetX - mouse.x) * 0.14;
+      mouse.y += (mouse.targetY - mouse.y) * 0.14;
+
+      // Draw clearly visible risograph blue grid lines
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(20, 85, 175, 0.22)';
+      ctx.beginPath();
+      for (let x = 0; x <= width; x += spacing * 2) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+      }
+      for (let y = 0; y <= height; y += spacing * 2) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+      }
+      ctx.stroke();
+
+      // Render physical reactive pattern marks (crosses, rings, dots)
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const dx = mouse.x - node.originX;
+        const dy = mouse.y - node.originY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        let targetX = dot.originX;
-        let targetY = dot.originY;
-        let currentSize = dot.size;
-        let currentAlpha = dot.baseAlpha;
+        let targetX = node.originX;
+        let targetY = node.originY;
+        let currentSize = node.baseSize;
+        let currentAlpha = 0.52; // Crisp, clearly visible base opacity
+        let strokeColor = 'rgba(15, 75, 170, 0.52)';
 
         if (dist < mouse.radius) {
           const force = (1 - dist / mouse.radius);
           const angle = Math.atan2(dy, dx);
-          // Gently push dot slightly away from cursor
-          const push = force * 8;
-          targetX = dot.originX - Math.cos(angle) * push;
-          targetY = dot.originY - Math.sin(angle) * push;
-          currentSize = dot.size + force * 1.6;
-          currentAlpha = dot.baseAlpha + force * 0.45;
+          
+          // Physical elastic distortion: wave ripple + push away
+          const ripple = Math.sin(dist * 0.06 - time * 2.5) * 5;
+          const push = force * 14 + ripple;
+
+          targetX = node.originX - Math.cos(angle) * push;
+          targetY = node.originY - Math.sin(angle) * push;
+          
+          currentSize = node.baseSize + force * 3.5;
+          currentAlpha = 0.52 + force * 0.45; // Intensifies to ~0.97 saturated cobalt blue
+          strokeColor = `rgba(0, 80, 220, ${currentAlpha})`;
+        } else {
+          // Gentle ambient breathing
+          targetX = node.originX + Math.sin(time + node.originY * 0.02) * 1.2;
+          targetY = node.originY + Math.cos(time + node.originX * 0.02) * 1.2;
         }
 
-        // Smooth spring ease
-        dot.x += (targetX - dot.x) * 0.15;
-        dot.y += (targetY - dot.y) * 0.15;
+        // Spring ease
+        node.x += (targetX - node.x) * 0.18;
+        node.y += (targetY - node.y) * 0.18;
 
-        ctx.fillStyle = `rgba(18, 76, 160, ${currentAlpha})`;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, currentSize, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = strokeColor;
+        ctx.strokeStyle = strokeColor;
+
+        if (node.type === 'cross') {
+          ctx.lineWidth = 1.8;
+          const s = currentSize;
+          ctx.beginPath();
+          ctx.moveTo(node.x - s, node.y);
+          ctx.lineTo(node.x + s, node.y);
+          ctx.moveTo(node.x, node.y - s);
+          ctx.lineTo(node.x, node.y + s);
+          ctx.stroke();
+        } else if (node.type === 'ring') {
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, currentSize, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, currentSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       animationFrameId = requestAnimationFrame(render);
