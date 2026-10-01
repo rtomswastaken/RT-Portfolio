@@ -263,10 +263,10 @@ export default function InteractiveBackground({ subtle = false }) {
       mouse.y += (mouse.targetY - mouse.y) * 0.14;
       mouse.speed *= 0.94;
 
-      // Soft, airy baby blue colors matching Contact page
-      const alphaMult = subtle ? 0.22 : 0.35;
-      const primaryColor = `rgba(70, 142, 226, ${alphaMult})`;
-      const secondaryColor = `rgba(105, 175, 245, ${alphaMult * 0.88})`;
+      // Fresh aqua/cyan liquid topographic colors matching reference
+      const alphaMult = subtle ? 0.25 : 0.42;
+      const primaryColor = `rgba(88, 216, 222, ${alphaMult})`;
+      const secondaryColor = `rgba(125, 232, 238, ${alphaMult * 0.9})`;
 
       // 1. Draw Filled Wavy Ribbons
       ribbons.forEach((ribbon) => {

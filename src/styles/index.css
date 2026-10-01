@@ -4,18 +4,18 @@
    ========================================================================== */
 
 :root {
-  /* Proper, Visible Blue Visual Identity */
-  --bg-baby-blue: #B5DCF8;
-  --bg-soft-blue: #A2D2F5;
-  --bg-sky-blue: #90C7F2;
-  --bg-pale-blue: #C2E4FA;
-  --bg-medium-blue: #7BB9EE;
+  /* Proper, Visible Blue/Aqua Visual Identity matching reference */
+  --bg-baby-blue: #9EF6F9;
+  --bg-soft-blue: #8FEBEF;
+  --bg-sky-blue: #7FE0E5;
+  --bg-pale-blue: #B5FAFC;
+  --bg-medium-blue: #60D6DC;
   --bg-deep-blue: #081E3E;
   --bg-midnight: #041228;
   
   /* Ink & Typography */
   --ink-deep: #061830;
-  --ink-midnight: #041022;
+  --ink-midnight: #000000;
   --ink-body: #102A48;
   --ink-muted: #385D85;
   --ink-light: #F0F6FD;
@@ -28,7 +28,7 @@
   --accent-navy: #022B69;
   
   /* Fonts */
-  --font-tall: 'Bebas Neue', 'Anton', sans-serif;
+  --font-tall: 'Chakra Petch', sans-serif;
   --font-quirky: 'Bricolage Grotesque', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-hand: 'Caveat', cursive;
@@ -235,7 +235,7 @@ a {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: clamp(6.8rem, 13.5vh, 9.5rem);
+  padding-top: clamp(4rem, 7.5vh, 6.5rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -244,9 +244,9 @@ a {
 
 .hero-colossal-name {
   font-family: var(--font-tall);
-  font-weight: 900;
-  font-size: clamp(5rem, 13.8vw, 17rem);
-  line-height: 0.74;
+  font-weight: 700;
+  font-size: clamp(4.6rem, 11.6vw, 14.5rem);
+  line-height: 0.68;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -258,19 +258,19 @@ a {
 
 .name-line-first {
   display: block;
-  color: var(--ink-midnight);
-  transform: scaleY(2.15) scaleX(1.05);
-  letter-spacing: 0.02em;
+  color: #000000;
+  transform: scaleY(2.2);
+  letter-spacing: 0.04em;
   transform-origin: center center;
 }
 
 .name-line-second {
   display: block;
-  color: var(--accent-cobalt);
-  transform: scaleY(2.15) scaleX(1.56);
-  letter-spacing: 0.32em;
-  margin-left: 0.32em;
-  margin-top: 0.54em;
+  color: #000000;
+  font-size: 1.18em;
+  transform: scaleY(2.2);
+  letter-spacing: 0.055em;
+  margin-top: 0.50em;
   transform-origin: center center;
 }
 
