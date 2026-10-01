@@ -2,12 +2,13 @@ import React, { useEffect, useRef } from 'react';
 
 /**
  * InteractiveBackground:
- * Renders a high-resolution, vector-smooth organic topographic pattern:
- * - 100% DPR-aware vector Bézier curves (zero pixelation on Retina/1440p displays)
- * - Soft, airy, light blue palette matching the Contact page aesthetic
- * - Fewer bands, larger shapes, wider curves, and generous negative space (uncluttered)
- * - Smooth continuous liquid deformation (waves gently undulate and breathe)
- * - Soft concave gel/liquid cursor deflection (curves bend and ripple under touch)
+ * Renders the authentic, smooth organic wavy / amoeba / topographic pattern
+ * matching the reference image using 100% vector-smooth filled Bézier shapes:
+ * - Alternating thick flowing filled ribbons across the canvas
+ * - Nested amoeba rings (using evenodd hole cutouts) with center island pebbles
+ * - 100% Retina/DPR-aware anti-aliased vector rendering (ZERO PIXELS)
+ * - Soft, airy baby blue palette matching the Contact page
+ * - Continuous slow fluid deformation & concave cursor deflection
  */
 export default function InteractiveBackground({ subtle = false }) {
   const canvasRef = useRef(null);
@@ -39,62 +40,60 @@ export default function InteractiveBackground({ subtle = false }) {
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Deterministic random
-    const createRandom = (seed) => {
-      let s = seed;
-      return () => {
-        s = Math.sin(s) * 10000;
-        return s - Math.floor(s);
-      };
-    };
-
-    let topographicLayers = [];
-
-    // Smooth cubic bezier spline through control points
-    const drawSmoothPath = (ctx, points, closed = false) => {
-      if (points.length < 2) return;
-      ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-
-      if (closed) {
-        const len = points.length;
-        for (let i = 0; i < len; i++) {
-          const p0 = points[(i - 1 + len) % len];
-          const p1 = points[i];
-          const p2 = points[(i + 1) % len];
-          const p3 = points[(i + 2) % len];
-
-          const cp1x = p1.x + (p2.x - p0.x) / 5.5;
-          const cp1y = p1.y + (p2.y - p0.y) / 5.5;
-          const cp2x = p2.x - (p3.x - p1.x) / 5.5;
-          const cp2y = p2.y - (p3.y - p1.y) / 5.5;
-
-          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
-        }
-        ctx.closePath();
+    // Helper: draw cubic bezier spline through an array of points
+    const traceSpline = (ctx, pts, startWithMoveTo = true) => {
+      if (pts.length < 2) return;
+      if (startWithMoveTo) {
+        ctx.moveTo(pts[0].x, pts[0].y);
       } else {
-        for (let i = 0; i < points.length - 1; i++) {
-          const p0 = i > 0 ? points[i - 1] : points[i];
-          const p1 = points[i];
-          const p2 = points[i + 1];
-          const p3 = i < points.length - 2 ? points[i + 2] : p2;
+        ctx.lineTo(pts[0].x, pts[0].y);
+      }
 
-          const cp1x = p1.x + (p2.x - p0.x) / 5.5;
-          const cp1y = p1.y + (p2.y - p0.y) / 5.5;
-          const cp2x = p2.x - (p3.x - p1.x) / 5.5;
-          const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = i > 0 ? pts[i - 1] : pts[i];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = i < pts.length - 2 ? pts[i + 2] : p2;
 
-          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
-        }
+        const cp1x = p1.x + (p2.x - p0.x) / 5.5;
+        const cp1y = p1.y + (p2.y - p0.y) / 5.5;
+        const cp2x = p2.x - (p3.x - p1.x) / 5.5;
+        const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
       }
     };
 
-    const initCanvas = () => {
+    // Helper: trace closed loop spline
+    const traceClosedLoop = (ctx, pts) => {
+      if (pts.length < 3) return;
+      const len = pts.length;
+      ctx.moveTo(pts[0].x, pts[0].y);
+
+      for (let i = 0; i < len; i++) {
+        const p0 = pts[(i - 1 + len) % len];
+        const p1 = pts[i];
+        const p2 = pts[(i + 1) % len];
+        const p3 = pts[(i + 2) % len];
+
+        const cp1x = p1.x + (p2.x - p0.x) / 5.5;
+        const cp1y = p1.y + (p2.y - p0.y) / 5.5;
+        const cp2x = p2.x - (p3.x - p1.x) / 5.5;
+        const cp2y = p2.y - (p3.y - p1.y) / 5.5;
+
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+      ctx.closePath();
+    };
+
+    let ribbons = [];
+    let amoebas = [];
+
+    const initShapes = () => {
       width = window.innerWidth;
       height = window.innerHeight;
       dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
-      // High-resolution Retina/1440p vector canvas
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
@@ -103,131 +102,105 @@ export default function InteractiveBackground({ subtle = false }) {
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
 
-      const rand = createRandom(5555);
-      topographicLayers = [];
+      ribbons = [];
+      amoebas = [];
 
-      // Wide, lush stroke width with ample negative space
-      const strokeW = Math.max(40, Math.min(62, width * 0.038));
-
-      // Soft, airy blue palette matching the Contact page
-      // Soft tone-on-tone: gentle, clean, airy, not psychedelic
-      const alphaBase = subtle ? 0.22 : 0.32;
-      const primaryColor = `rgba(70, 142, 226, ${alphaBase})`;
-      const secondaryColor = `rgba(105, 175, 245, ${alphaBase * 0.88})`;
-      const accentPebbleColor = `rgba(80, 152, 232, ${alphaBase * 0.95})`;
-
-      const makePoint = (x, y, amp = 16) => ({
+      const makePt = (x, y, amp = 16, freq = 0.00022) => ({
         baseX: x,
         baseY: y,
-        ampX: amp + rand() * 8,
-        ampY: amp + rand() * 8,
-        speedX: 0.0002 + rand() * 0.0002,
-        speedY: 0.00018 + rand() * 0.0002,
-        phaseX: rand() * Math.PI * 2,
-        phaseY: rand() * Math.PI * 2
+        ampX: amp,
+        ampY: amp,
+        speedX: freq,
+        speedY: freq * 0.9,
+        phaseX: (x * 0.004 + y * 0.003) % (Math.PI * 2),
+        phaseY: (x * 0.003 - y * 0.004) % (Math.PI * 2)
       });
 
-      // 1. FEWER, WIDER SWEEPING HORIZONTAL RIVERS (Calm, broad curves)
-      // Only 4 sweeping waves across the entire canvas height
-      const riverYPositions = [
-        0.06 * height,
-        0.26 * height,
-        0.72 * height,
-        0.94 * height
+      // 1. FILLED FLOWING WAVY RIBBONS (Top & Bottom bands like reference)
+      const ribbonBands = [
+        { centerY: 0.08 * height, thickness: 0.09 * height, waveAmp: 0.05 * height },
+        { centerY: 0.26 * height, thickness: 0.08 * height, waveAmp: 0.045 * height },
+        { centerY: 0.72 * height, thickness: 0.085 * height, waveAmp: 0.05 * height },
+        { centerY: 0.93 * height, thickness: 0.10 * height, waveAmp: 0.055 * height }
       ];
 
-      riverYPositions.forEach((baseY, idx) => {
-        const points = [];
-        const numSegments = 7; // fewer segments = wider, smoother, calmer curves
+      ribbonBands.forEach((b, rIdx) => {
+        const numSegments = 7;
         const stepX = (width * 1.35) / numSegments;
         const startX = -0.18 * width;
 
+        const topPts = [];
+        const botPts = [];
+
         for (let i = 0; i <= numSegments; i++) {
           const x = startX + i * stepX;
-          const wave = Math.sin(i * 0.95 + idx * 1.8) * (height * 0.065) +
-                       Math.cos(i * 0.7 + idx) * (height * 0.035);
-          points.push(makePoint(x, baseY + wave, 18));
+          const wave = Math.sin(i * 0.95 + rIdx * 1.7) * b.waveAmp;
+          const halfThick = b.thickness * 0.5;
+
+          topPts.push(makePt(x, b.centerY + wave - halfThick, 18, 0.0002 + rIdx * 0.00005));
+          botPts.push(makePt(x, b.centerY + wave + halfThick, 18, 0.0002 + rIdx * 0.00005));
         }
 
-        topographicLayers.push({
-          type: 'ribbon',
-          points,
-          closed: false,
-          strokeColor: idx % 2 === 0 ? primaryColor : secondaryColor,
-          strokeWidth: strokeW
-        });
+        ribbons.push({ topPts, botPts, isSecondary: rIdx % 2 !== 0 });
       });
 
-      // 2. LARGE, CALM AMOEBA CONTOUR LOOPS (Placed in generous negative spaces)
-      // Only 4 large, spacious organic loops
-      const loopConfigs = [
-        // Upper-left spacious loop + pebble
-        { cx: 0.13 * width, cy: 0.28 * height, rx: 0.12 * width, ry: 0.13 * height, nested: true, hasDot: true },
-        // Upper-right calm kidney loop
-        { cx: 0.88 * width, cy: 0.25 * height, rx: 0.11 * width, ry: 0.15 * height, nested: true, hasDot: false },
-        // Lower-left soft rounded oval
-        { cx: 0.15 * width, cy: 0.74 * height, rx: 0.13 * width, ry: 0.11 * height, nested: true, hasDot: true },
-        // Lower-right elongated contour ring
-        { cx: 0.86 * width, cy: 0.76 * height, rx: 0.12 * width, ry: 0.14 * height, nested: true, hasDot: true }
+      // 2. CONCENTRIC AMOEBA RINGS WITH INNER HOLES & PEBBLE ISLANDS (Middle / Side field)
+      const amoebaDefs = [
+        // Upper-left nested amoeba + island
+        { cx: 0.13 * width, cy: 0.28 * height, rx: 0.12 * width, ry: 0.13 * height, hasHole: true, hasIsland: true },
+        // Upper-right calm kidney amoeba
+        { cx: 0.88 * width, cy: 0.25 * height, rx: 0.11 * width, ry: 0.15 * height, hasHole: true, hasIsland: false },
+        // Lower-left soft rounded amoeba + island
+        { cx: 0.14 * width, cy: 0.74 * height, rx: 0.13 * width, ry: 0.12 * height, hasHole: true, hasIsland: true },
+        // Lower-right elongated amoeba ring + island
+        { cx: 0.87 * width, cy: 0.76 * height, rx: 0.12 * width, ry: 0.14 * height, hasHole: true, hasIsland: true }
       ];
 
-      loopConfigs.forEach((cfg, lIdx) => {
-        const numPts = 6;
-        const outerPoints = [];
+      amoebaDefs.forEach((def, aIdx) => {
+        const numPts = 7;
+        const outerPts = [];
+        const innerPts = [];
+        const islandPts = [];
+
+        const holeScale = 0.52;
+        const islandScale = 0.22;
 
         for (let i = 0; i < numPts; i++) {
           const theta = (i / numPts) * Math.PI * 2;
-          const jitter = 1 + (rand() - 0.5) * 0.28;
-          const px = cfg.cx + Math.cos(theta) * (cfg.rx * jitter);
-          const py = cfg.cy + Math.sin(theta) * (cfg.ry * jitter);
-          outerPoints.push(makePoint(px, py, 14));
-        }
+          const jitter = 1 + Math.sin(theta * 2 + aIdx) * 0.16 + Math.cos(theta * 3) * 0.1;
 
-        topographicLayers.push({
-          type: 'amoeba',
-          points: outerPoints,
-          closed: true,
-          strokeColor: lIdx % 2 === 0 ? primaryColor : secondaryColor,
-          strokeWidth: strokeW
-        });
+          const px = def.cx + Math.cos(theta) * (def.rx * jitter);
+          const py = def.cy + Math.sin(theta) * (def.ry * jitter);
+          outerPts.push(makePt(px, py, 15, 0.00022));
 
-        // Nested inner contour ring
-        if (cfg.nested) {
-          const innerPoints = [];
-          const innerScale = 0.52;
-          for (let i = 0; i < numPts; i++) {
-            const theta = (i / numPts) * Math.PI * 2;
-            const jitter = 1 + (rand() - 0.5) * 0.22;
-            const px = cfg.cx + Math.cos(theta) * (cfg.rx * innerScale * jitter);
-            const py = cfg.cy + Math.sin(theta) * (cfg.ry * innerScale * jitter);
-            innerPoints.push(makePoint(px, py, 10));
+          if (def.hasHole) {
+            const hx = def.cx + Math.cos(theta) * (def.rx * holeScale * jitter);
+            const hy = def.cy + Math.sin(theta) * (def.ry * holeScale * jitter);
+            innerPts.push(makePt(hx, hy, 12, 0.00022));
           }
 
-          topographicLayers.push({
-            type: 'amoeba',
-            points: innerPoints,
-            closed: true,
-            strokeColor: secondaryColor,
-            strokeWidth: strokeW
-          });
+          if (def.hasIsland) {
+            const ix = def.cx + Math.cos(theta) * (def.rx * islandScale * jitter);
+            const iy = def.cy + Math.sin(theta) * (def.ry * islandScale * jitter);
+            islandPts.push(makePt(ix, iy, 9, 0.00022));
+          }
         }
 
-        // Center pebble dot
-        if (cfg.hasDot) {
-          topographicLayers.push({
-            type: 'dot',
-            center: makePoint(cfg.cx, cfg.cy, 10),
-            radius: strokeW * 0.45,
-            fillColor: accentPebbleColor
-          });
-        }
+        amoebas.push({
+          outerPts,
+          innerPts,
+          islandPts,
+          hasHole: def.hasHole,
+          hasIsland: def.hasIsland,
+          isSecondary: aIdx % 2 !== 0
+        });
       });
     };
 
-    initCanvas();
+    initShapes();
 
     const handleResize = () => {
-      initCanvas();
+      initShapes();
     };
 
     const handleMouseMove = (e) => {
@@ -242,7 +215,6 @@ export default function InteractiveBackground({ subtle = false }) {
     const handleMouseLeave = () => {
       mouse.targetX = -2000;
       mouse.targetY = -2000;
-      mouse.speed = 0;
     };
 
     const handleVisibilityChange = () => {
@@ -254,9 +226,29 @@ export default function InteractiveBackground({ subtle = false }) {
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // =========================================================================
-    // SMOOTH VECTOR FLUID RENDER LOOP
-    // =========================================================================
+    // Deform points with fluid drift + concave cursor deflection
+    const getDeformedPts = (pts) => {
+      const lensRadius = mouse.radius;
+      return pts.map((pt) => {
+        let px = pt.baseX + Math.sin(time * pt.speedX + pt.phaseX) * pt.ampX;
+        let py = pt.baseY + Math.cos(time * pt.speedY + pt.phaseY) * pt.ampY;
+
+        const dx = px - mouse.x;
+        const dy = py - mouse.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < lensRadius && dist > 1) {
+          const norm = dist / lensRadius;
+          const push = Math.sin(norm * Math.PI) * (1 - norm) * (26 + mouse.speed * 12);
+          px += (dx / dist) * push;
+          py += (dy / dist) * push;
+        }
+
+        return { x: px, y: py };
+      });
+    };
+
+    // Main 60fps render loop
     const render = (timestamp) => {
       if (!isVisible) {
         animationFrameId = requestAnimationFrame(render);
@@ -266,67 +258,55 @@ export default function InteractiveBackground({ subtle = false }) {
       time = prefersReducedMotion ? 0 : timestamp;
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth cursor follow
+      // Smooth mouse follow
       mouse.x += (mouse.targetX - mouse.x) * 0.14;
       mouse.y += (mouse.targetY - mouse.y) * 0.14;
       mouse.speed *= 0.94;
 
-      const lensRadius = mouse.radius;
+      // Soft, airy baby blue colors matching Contact page
+      const alphaMult = subtle ? 0.22 : 0.35;
+      const primaryColor = `rgba(70, 142, 226, ${alphaMult})`;
+      const secondaryColor = `rgba(105, 175, 245, ${alphaMult * 0.88})`;
 
-      // Render vector paths
-      for (let l = 0; l < topographicLayers.length; l++) {
-        const layer = topographicLayers[l];
+      // 1. Draw Filled Wavy Ribbons
+      ribbons.forEach((ribbon) => {
+        const top = getDeformedPts(ribbon.topPts);
+        const bot = getDeformedPts(ribbon.botPts);
 
-        if (layer.type === 'dot') {
-          const pt = layer.center;
-          let px = pt.baseX + Math.sin(time * pt.speedX + pt.phaseX) * pt.ampX;
-          let py = pt.baseY + Math.cos(time * pt.speedY + pt.phaseY) * pt.ampY;
+        ctx.beginPath();
+        traceSpline(ctx, top, true);
+        ctx.lineTo(bot[bot.length - 1].x, bot[bot.length - 1].y);
+        traceSpline(ctx, [...bot].reverse(), false);
+        ctx.closePath();
 
-          const dx = px - mouse.x;
-          const dy = py - mouse.y;
-          const dist = Math.hypot(dx, dy);
+        ctx.fillStyle = ribbon.isSecondary ? secondaryColor : primaryColor;
+        ctx.fill();
+      });
 
-          if (dist < lensRadius && dist > 1) {
-            const norm = dist / lensRadius;
-            const push = Math.sin(norm * Math.PI) * (1 - norm) * (24 + mouse.speed * 10);
-            px += (dx / dist) * push;
-            py += (dy / dist) * push;
-          }
+      // 2. Draw Filled Amoeba Rings with Holes & Islands
+      amoebas.forEach((amoeba) => {
+        const outer = getDeformedPts(amoeba.outerPts);
 
-          ctx.fillStyle = layer.fillColor;
-          ctx.beginPath();
-          ctx.arc(px, py, layer.radius, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          const deformedPoints = layer.points.map((pt) => {
-            let px = pt.baseX + Math.sin(time * pt.speedX + pt.phaseX) * pt.ampX +
-                     Math.cos(time * pt.speedY * 0.8 + pt.phaseY) * (pt.ampX * 0.4);
-            let py = pt.baseY + Math.cos(time * pt.speedY + pt.phaseY) * pt.ampY +
-                     Math.sin(time * pt.speedX * 0.8 + pt.phaseX) * (pt.ampY * 0.4);
+        ctx.beginPath();
+        traceClosedLoop(ctx, outer);
 
-            const dx = px - mouse.x;
-            const dy = py - mouse.y;
-            const dist = Math.hypot(dx, dy);
-
-            if (dist < lensRadius && dist > 1) {
-              const norm = dist / lensRadius;
-              const push = Math.sin(norm * Math.PI) * (1 - norm) * (26 + mouse.speed * 12);
-              px += (dx / dist) * push;
-              py += (dy / dist) * push;
-            }
-
-            return { x: px, y: py };
-          });
-
-          ctx.strokeStyle = layer.strokeColor;
-          ctx.lineWidth = layer.strokeWidth;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-
-          drawSmoothPath(ctx, deformedPoints, layer.closed);
-          ctx.stroke();
+        if (amoeba.hasHole && amoeba.innerPts.length > 0) {
+          const inner = getDeformedPts(amoeba.innerPts);
+          traceClosedLoop(ctx, [...inner].reverse());
         }
-      }
+
+        ctx.fillStyle = amoeba.isSecondary ? secondaryColor : primaryColor;
+        ctx.fill('evenodd'); // cuts out the hole cleanly!
+
+        // Draw central island pebble
+        if (amoeba.hasIsland && amoeba.islandPts.length > 0) {
+          const island = getDeformedPts(amoeba.islandPts);
+          ctx.beginPath();
+          traceClosedLoop(ctx, island);
+          ctx.fillStyle = amoeba.isSecondary ? secondaryColor : primaryColor;
+          ctx.fill();
+        }
+      });
 
       animationFrameId = requestAnimationFrame(render);
     };
