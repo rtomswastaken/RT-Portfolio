@@ -19,7 +19,7 @@ export const HandUnderline = ({ color = "#00B4D8", className = "" }) => (
 );
 
 // Imperfect hand-drawn circle around a word
-export const HandCircle = ({ color = "#6C5CE7", className = "" }) => (
+export const HandCircle = ({ color = "#1E5AA8", className = "" }) => (
   <svg 
     viewBox="0 0 160 65" 
     fill="none" 
@@ -69,30 +69,7 @@ export const DoodleStar = ({ size = 20, color = "#00B4D8", className = "" }) => 
   </svg>
 );
 
-// Hand-drawn Turtle Doodle (SVG Vector - zero emoji)
-export const TurtleDoodle = ({ size = 32, color = "#0B2545", className = "" }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 48 48" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={`doodle-turtle ${className}`}
-  >
-    {/* Shell */}
-    <ellipse cx="24" cy="24" rx="14" ry="11" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
-    <path d="M24 13V35M14 24H34M17 17L31 31M17 31L31 17" stroke={color} strokeWidth="1.6" strokeLinecap="round" opacity="0.65" />
-    {/* Head */}
-    <circle cx="41" cy="24" r="4.5" stroke={color} strokeWidth="2.2" />
-    <circle cx="42" cy="22.5" r="1" fill={color} />
-    {/* Legs */}
-    <path d="M14 15C11 11 8 13 10 17M14 33C11 37 8 35 10 31M31 14C34 10 38 12 36 16M31 34C34 38 38 36 36 32" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
-    {/* Tiny Tail */}
-    <path d="M10 24H6" stroke={color} strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-
-// Minimal Apple-inspired hardware silhouette doodle (zero copyright logo, pure aesthetic homage)
+// Minimal Apple-inspired hardware silhouette doodle
 export const AppleDoodle = ({ size = 28, color = "#0B2545", className = "" }) => (
   <svg 
     width={size} 
@@ -124,8 +101,56 @@ export const CameraDoodle = ({ size = 28, color = "#0B2545", className = "" }) =
   </svg>
 );
 
+// Code brackets doodle
+export const CodeDoodle = ({ size = 28, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 36 36" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-code ${className}`}
+  >
+    <path d="M12 11L5 18L12 25" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M24 11L31 18L24 25" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 9L16 27" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+  </svg>
+);
+
+// 3D Isometric Cube doodle
+export const CubeDoodle = ({ size = 28, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 36 36" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-cube ${className}`}
+  >
+    <path d="M18 4L31 11V25L18 32L5 25V11L18 4Z" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+    <path d="M18 4V18M18 18V32M18 18L31 11M18 18L5 11" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+  </svg>
+);
+
+// Hand-drawn Car Silhouette doodle
+export const CarDoodle = ({ size = 32, color = "#0B2545", className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 44 32" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={`doodle-car ${className}`}
+  >
+    <path d="M4 21C6 16 11 13 15 13H27C31 13 36 17 38 21H40C41 21 42 22 42 23V25H2V23C2 22 3 21 4 21Z" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+    <circle cx="11" cy="25" r="4" stroke={color} strokeWidth="2" />
+    <circle cx="31" cy="25" r="4" stroke={color} strokeWidth="2" />
+    <path d="M15 13L18 7H26L29 13" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 // Tape strip effect
-export const WashiTape = ({ width = 80, height = 24, rotation = -3, color = "rgba(255, 230, 109, 0.65)", className = "" }) => (
+export const WashiTape = ({ width = 80, height = 24, rotation = -3, color = "rgba(100, 180, 245, 0.45)", className = "" }) => (
   <div 
     className={`washi-tape ${className}`}
     style={{

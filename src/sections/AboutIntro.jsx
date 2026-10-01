@@ -1,5 +1,5 @@
 import React from 'react';
-import { HandCircle, WashiTape, TurtleDoodle } from '../components/Doodles';
+import { HandCircle, WashiTape } from '../components/Doodles';
 
 export default function AboutIntro() {
   return (
@@ -15,7 +15,7 @@ export default function AboutIntro() {
             </h2>
 
             <p className="about-short-story font-body">
-              I like building at the weird intersection where software architecture, tactile visual identity, and playful aesthetics meet. 
+              I like building at the intersection where software architecture, tactile visual identity, and playful aesthetics meet. 
               Most of my best ideas come from wondering &quot;wait... can I actually make a computer do that?&quot; and then refusing to stop until it works.
             </p>
 
@@ -26,15 +26,15 @@ export default function AboutIntro() {
                 <span>CODE</span>
               </div>
               <div className="keyword-item tilt-k2">
-                <HandCircle color="#6C5CE7" />
+                <HandCircle color="#1E5AA8" />
                 <span>DESIGN</span>
               </div>
               <div className="keyword-item tilt-k3">
-                <HandCircle color="#2EC4B6" />
+                <HandCircle color="#0096C7" />
                 <span>AI</span>
               </div>
               <div className="keyword-item tilt-k4">
-                <HandCircle color="#FF6B6B" />
+                <HandCircle color="#48CAE4" />
                 <span>DOODLE</span>
               </div>
               <div className="keyword-item tilt-k5">
@@ -42,15 +42,12 @@ export default function AboutIntro() {
                 <span>PHOTO</span>
               </div>
               <div className="keyword-item tilt-k6">
-                <HandCircle color="#E67E22" />
+                <HandCircle color="#023E8A" />
                 <span>VIDEO</span>
               </div>
               <div className="keyword-item tilt-k7">
-                <HandCircle color="#27AE60" />
-                <span className="turtle-highlight">
-                  <TurtleDoodle size={18} color="#27AE60" className="inline-turtle" />
-                  TURTLES
-                </span>
+                <HandCircle color="#0077B6" />
+                <span>3D &amp; MOTION</span>
               </div>
             </div>
           </div>

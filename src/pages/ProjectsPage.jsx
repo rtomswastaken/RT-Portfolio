@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ExternalLink } from 'lucide-react';
-import { TurtleDoodle, WashiTape } from '../components/Doodles';
+import { DoodleStar, WashiTape } from '../components/Doodles';
 import { GitHubIcon } from '../components/Icons';
 
 export default function ProjectsPage() {
@@ -175,7 +175,7 @@ export default function ProjectsPage() {
         {/* Footer / Return note */}
         <div className="archive-footer-note">
           <div className="archive-return-box">
-            <TurtleDoodle size={28} color="#0B2545" />
+            <DoodleStar size={24} color="#00B4D8" />
             <div className="return-text">
               <span className="font-quirky">Seen enough technical code?</span>
               <p className="font-body">Head back to the playful homepage anytime.</p>

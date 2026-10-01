@@ -1,42 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
-import { WashiTape, TurtleDoodle } from '../components/Doodles';
+import { WashiTape } from '../components/Doodles';
 
 export default function ThreeProjectsTeaser() {
   const teasers = [
     {
       id: "zoe",
-      num: "01",
-      name: "ZOE",
-      humanLabel: "my local AI experiment",
-      desc: "An autonomous local AI assistant for macOS that lives in the MacBook notch and runs zero cloud APIs.",
-      githubUrl: "https://github.com/rtomswastaken/zoe-alpha-v0.1",
-      visualType: "notch",
-      bgClass: "teaser-bg-blue",
-      tiltClass: "teaser-tilt-left"
+      name: "ZOE ALPHA",
+      desc: "Local AI assistant for macOS that perceives screen and controls native input with zero cloud APIs.",
+      githubUrl: "https://github.com/rtomswastaken/zoe-alpha-v0.1"
     },
     {
       id: "chattui",
-      num: "02",
       name: "CHATTUI",
-      humanLabel: "terminal chat thing",
-      desc: "A Discord-like chat platform built for hackers in the terminal using Go, Bubble Tea, and Tailscale.",
-      githubUrl: "https://github.com/rtomswastaken/chattui",
-      visualType: "terminal",
-      bgClass: "teaser-bg-cream",
-      tiltClass: "teaser-tilt-right"
+      desc: "Terminal chat platform built for hackers in Go with Charm Bubble Tea and private Tailscale mesh.",
+      githubUrl: "https://github.com/rtomswastaken/chattui"
     },
     {
       id: "oriah",
-      num: "03",
-      name: "ORIAH",
-      humanLabel: "an IDE I decided to build",
-      desc: "A 4-quadrant agentic AI terminal code editor with interactive progress reports and syntax highlighting.",
-      githubUrl: "https://github.com/rtomswastaken/Oriah-IDE",
-      visualType: "quadrant",
-      bgClass: "teaser-bg-lavender",
-      tiltClass: "teaser-tilt-straight"
+      name: "ORIAH IDE",
+      desc: "4-quadrant agentic AI terminal code editor with interactive progress reports and syntax editing.",
+      githubUrl: "https://github.com/rtomswastaken/Oriah-IDE"
     }
   ];
 
@@ -44,66 +29,40 @@ export default function ThreeProjectsTeaser() {
     <section id="work" className="work-teaser-section">
       <div className="container">
         
-        {/* Section Header */}
+        {/* Section Header with Generous Negative Space */}
         <div className="work-teaser-header">
-          <span className="teaser-eyebrow font-hand">a tiny preview /</span>
-          <h2 className="teaser-main-title font-quirky">THINGS I&apos;VE BUILT</h2>
+          <span className="teaser-eyebrow font-hand">curated preview /</span>
+          <h2 className="teaser-main-title font-quirky">SELECTED WORK</h2>
           <p className="teaser-subtitle font-body">
-            Just three little samples. I build lots of things—mostly terminal tools, local AI, and experiments.
+            A small taste of software experiments. The complete ledger lives on the dedicated archive.
           </p>
         </div>
 
-        {/* 3 Scrapbook Project Pieces */}
-        <div className="teasers-scrapbook-stream">
-          {teasers.map((proj) => (
-            <article key={proj.id} className={`teaser-piece ${proj.tiltClass}`}>
-              <WashiTape width={70} height={20} rotation={-3} style={{ position: 'absolute', top: '-10px', left: '20px', zIndex: 3 }} />
+        {/* 3 Equal-Width Compact Cards in ONE Horizontal Row */}
+        <div className="teasers-compact-row">
+          {teasers.map((proj, idx) => (
+            <article key={proj.id} className={`compact-project-card card-tilt-${idx}`}>
+              <WashiTape 
+                width={50} 
+                height={16} 
+                rotation={idx === 1 ? 2 : -2} 
+                className="compact-card-tape" 
+              />
               
-              <div className={`teaser-visual-box ${proj.bgClass}`}>
-                {proj.visualType === 'notch' && (
-                  <div className="mini-notch-graphic">
-                    <div className="notch-pill" />
-                    <span className="notch-text font-quirky">LOCAL AI // NOTCH</span>
-                  </div>
-                )}
-
-                {proj.visualType === 'terminal' && (
-                  <div className="mini-term-graphic font-body">
-                    <div className="mini-term-bar">
-                      <span className="mini-dot" /><span className="mini-dot" /><span className="mini-dot" />
-                    </div>
-                    <div className="mini-term-code">&gt; chattui connected</div>
-                  </div>
-                )}
-
-                {proj.visualType === 'quadrant' && (
-                  <div className="mini-quadrant-graphic">
-                    <div className="quad-cell quad-1" />
-                    <div className="quad-cell quad-2" />
-                    <div className="quad-cell quad-3" />
-                    <div className="quad-cell quad-4" />
-                  </div>
-                )}
-              </div>
-
-              <div className="teaser-text-box">
-                <div className="teaser-top-meta">
-                  <span className="teaser-num font-serif">{proj.num}</span>
-                  <span className="teaser-human-tag font-hand">{proj.humanLabel}</span>
-                </div>
-
-                <h3 className="teaser-proj-name font-quirky">{proj.name}</h3>
-                <p className="teaser-proj-desc font-body">{proj.desc}</p>
-
-                <div className="teaser-link-row">
+              <div className="compact-card-inner">
+                <span className="compact-card-num font-serif">0{idx + 1}</span>
+                <h3 className="compact-card-title font-quirky">{proj.name}</h3>
+                <p className="compact-card-desc font-body">{proj.desc}</p>
+                
+                <div className="compact-card-footer">
                   <a 
                     href={proj.githubUrl} 
                     target="_blank" 
                     rel="noreferrer" 
-                    className="teaser-github-link font-quirky"
+                    className="compact-card-link font-quirky"
                   >
                     <span>GITHUB</span>
-                    <ArrowUpRight size={15} />
+                    <ArrowUpRight size={14} />
                   </a>
                 </div>
               </div>
@@ -111,11 +70,11 @@ export default function ThreeProjectsTeaser() {
           ))}
         </div>
 
-        {/* Prominent "SEE ALL PROJECTS →" Button to /projects */}
+        {/* Clean Link to /projects */}
         <div className="see-all-projects-wrapper">
           <Link to="/projects" className="see-all-projects-btn font-quirky">
             <span>SEE ALL PROJECTS</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={16} />
           </Link>
           <span className="see-all-note font-hand">
             the complete, organized archive &rarr;

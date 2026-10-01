@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { GitHubIcon, LinkedInIcon, InstagramIcon, MailIcon } from '../components/Icons';
-import { TurtleDoodle } from '../components/Doodles';
+import { DoodleStar } from '../components/Doodles';
 
 export default function ContactPoster() {
   const links = [
@@ -25,7 +25,7 @@ export default function ContactPoster() {
         </div>
 
         <p className="contact-sub-statement font-body">
-          Got an idea, a weird project, or want to share a cool turtle fact? My inbox is always open.
+          Got an idea, a weird project, or want to collaborate on something fun? My inbox is always open.
         </p>
 
         {/* Clean Oversized Channel Buttons */}
@@ -58,8 +58,8 @@ export default function ContactPoster() {
             </div>
           </div>
 
-          <div className="footer-turtle-nod">
-            <TurtleDoodle size={22} color="#0B2545" />
+          <div className="footer-closing-nod">
+            <DoodleStar size={18} color="#00B4D8" />
             <span className="font-hand">no corporate cookies used here</span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HandArrow, TurtleDoodle } from '../components/Doodles';
+import { HandArrow } from '../components/Doodles';
 
 export default function HeroPoster() {
   const [mascotOffset, setMascotOffset] = useState({ x: 0, y: 0 });
@@ -7,8 +7,8 @@ export default function HeroPoster() {
 
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 16;
-    const y = (clientY / window.innerHeight - 0.5) * 16;
+    const x = (clientX / window.innerWidth - 0.5) * 20;
+    const y = (clientY / window.innerHeight - 0.5) * 20;
     setMascotOffset({ x, y });
   };
 
@@ -16,9 +16,9 @@ export default function HeroPoster() {
     const sayings = [
       "welcome to my corner!",
       "probably tinkering right now.",
-      "slow and steady builds things.",
-      "have you seen my turtle?",
-      "built with caffeine & curiosity."
+      "making software with personality.",
+      "built with curiosity & caffeine.",
+      "pixels, code & weird ideas."
     ];
     setBubbleText(prev => {
       const filtered = sayings.filter(s => s !== prev);
@@ -43,38 +43,40 @@ export default function HeroPoster() {
         <div 
           className="mascot-speech-bubble font-hand"
           style={{
-            transform: `translate(calc(-50% + ${mascotOffset.x * 0.5}px), calc(-50% + ${mascotOffset.y * 0.5}px))`
+            transform: `translate(calc(-50% + ${mascotOffset.x * 0.4}px), calc(-50% + ${mascotOffset.y * 0.4}px))`
           }}
           onClick={handleMascotClick}
-          title="Click me!"
+          title="Click to poke!"
         >
           <span>{bubbleText}</span>
           <div className="bubble-pointer" />
         </div>
 
-        {/* Giant Expressive Poster Headline */}
-        <h1 className="hero-giant-title">
-          <span className="name-top">RICHARDSEN</span>
-          <span className="name-bottom">THOMAS</span>
-        </h1>
+        {/* Giant Expressive Poster Headline — Dramatically Increased Display Size */}
+        <div className="hero-typography-stage">
+          <h1 className="hero-giant-title">
+            <span className="name-top">RICHARDSEN</span>
+            <span className="name-bottom">THOMAS</span>
+          </h1>
 
-        {/* 3D Character Mascot — Sitting Front-and-Center on the Typography */}
-        <div 
-          className="hero-mascot-wrapper"
-          style={{
-            transform: `translate(calc(-50% + ${mascotOffset.x}px), calc(-42% + ${mascotOffset.y}px))`
-          }}
-          onClick={handleMascotClick}
-          role="button"
-          tabIndex={0}
-          aria-label="Richardsen Thomas Mascot"
-        >
-          <img 
-            src="/assets/avatar.png" 
-            alt="Richardsen Thomas Mascot" 
-            className="hero-mascot-image"
-            loading="eager"
-          />
+          {/* HUGE 3D Character Mascot — Primary Visual Centerpiece (50-70% visual area, overlapping typography) */}
+          <div 
+            className="hero-mascot-wrapper"
+            style={{
+              transform: `translate(calc(-50% + ${mascotOffset.x}px), calc(-36% + ${mascotOffset.y}px))`
+            }}
+            onClick={handleMascotClick}
+            role="button"
+            tabIndex={0}
+            aria-label="Richardsen Thomas Mascot"
+          >
+            <img 
+              src="/assets/avatar.png" 
+              alt="Richardsen Thomas Mascot" 
+              className="hero-mascot-image"
+              loading="eager"
+            />
+          </div>
         </div>
 
         {/* Hand-drawn Pointer Arrow to Mascot */}
@@ -83,13 +85,7 @@ export default function HeroPoster() {
           <span className="hero-arrow-text font-hand">click to poke</span>
         </div>
 
-        {/* Corner Supervisor: Tiny Turtle peeking */}
-        <div className="hero-turtle-badge">
-          <img src="/assets/mascot.png" alt="Supervisor Turtle" className="tiny-turtle-img" />
-          <span className="tiny-turtle-label font-hand">project supervisor</span>
-        </div>
-
-        {/* Supporting Editorial Ribbon */}
+        {/* Supporting Editorial Ribbon with Ample Spacing */}
         <div className="hero-footer-ribbon">
           <p className="hero-tagline-text">
             Making weird, playful things for the internet and beyond.

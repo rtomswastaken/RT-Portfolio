@@ -1,4 +1,5 @@
 import React from 'react';
+import InteractiveBackground from '../components/InteractiveBackground';
 import HeroPoster from '../sections/HeroPoster';
 import AboutIntro from '../sections/AboutIntro';
 import PersonalPlayground from '../sections/PersonalPlayground';
@@ -8,17 +9,20 @@ import ContactPoster from '../sections/ContactPoster';
 export default function HomePage() {
   return (
     <div className="homepage-wrapper">
-      {/* 01 — INTRO / HERO: Mascot as Main Character + Expressive Typography */}
+      {/* Interactive Cursor-Reactive Background Pattern */}
+      <InteractiveBackground />
+
+      {/* 01 — INTRO / HERO: Giant Typography + Huge 3D Mascot */}
       <HeroPoster />
 
-      {/* 02 — LITTLE ABOUT ME: Human tone + Scattered Keywords */}
+      {/* 02 — LITTLE ABOUT ME: Short Human Tone + Scattered Keywords */}
       <AboutIntro />
 
-      {/* 03 — RANDOM PERSONAL STUFF: Turtle Obsession, Apple Design, Photography, Doodling */}
-      <PersonalPlayground />
-
-      {/* 04 — THREE PROJECT TEASERS: Zoe, chatTUI, Oriah + "SEE ALL PROJECTS →" button */}
+      {/* 03 — THREE COMPACT PROJECT TEASERS: Zoe, chatTUI, Oriah in ONE Horizontal Row */}
       <ThreeProjectsTeaser />
+
+      {/* 04 — INTERESTS SECTION: Infinite Horizontal 2-Row Card Wall */}
+      <PersonalPlayground />
 
       {/* 05 — END / CONTACT & FOOTER */}
       <ContactPoster />
