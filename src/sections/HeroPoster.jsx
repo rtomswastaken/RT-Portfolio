@@ -14,12 +14,9 @@ export default function HeroPoster() {
     <section id="hero" className="hero-section" onMouseMove={handleMouseMove}>
       <div className="hero-poster-canvas">
         
-        {/* Layer 3: Giant Richardsen Thomas Display Typography */}
+        {/* Layer 3: Giant RTOMS Display Typography in very tall slim font */}
         <div className="hero-typography-layer">
-          <h1 className="hero-colossal-name">
-            <span className="name-line-first">RICHARDSEN</span>
-            <span className="name-line-second">THOMAS</span>
-          </h1>
+          <h1 className="hero-colossal-title">RTOMS</h1>
         </div>
 
         {/* Layer 4: Massive 3D Mascot anchored at the bottom */}
@@ -35,6 +32,11 @@ export default function HeroPoster() {
             className="hero-colossal-mascot-img"
             loading="eager"
           />
+        </div>
+
+        {/* Layer 5: Richardsen Thomas single line in front of the mascot */}
+        <div className="hero-subtitle-front-layer">
+          <p className="hero-single-line-name">RICHARDSEN THOMAS</p>
         </div>
 
       </div>

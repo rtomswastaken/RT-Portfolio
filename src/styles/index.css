@@ -29,6 +29,7 @@
   
   /* Fonts */
   --font-tall: 'Gabarito', 'Rubik', sans-serif;
+  --font-slim-tall: 'Teko', 'Bebas Neue', sans-serif;
   --font-quirky: 'Bricolage Grotesque', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-hand: 'Caveat', cursive;
@@ -230,46 +231,58 @@ a {
   text-align: center;
 }
 
-/* Layer 3: Giant Richardsen Thomas Display Typography */
+/* Layer 3: Giant RTOMS Display Typography */
 .hero-typography-layer {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: clamp(4rem, 7vh, 6rem);
+  padding-top: clamp(2rem, 5vh, 4rem);
   display: flex;
   justify-content: center;
   align-items: center;
   user-select: none;
+  overflow: hidden;
 }
 
-.hero-colossal-name {
-  font-family: var(--font-tall);
-  font-weight: 900;
-  font-size: clamp(5rem, 12.5vw, 15rem);
-  line-height: 0.84;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
+.hero-colossal-title {
+  font-family: var(--font-slim-tall);
+  font-weight: 700;
+  font-size: clamp(8rem, 25vw, 32rem);
+  line-height: 0.76;
+  letter-spacing: clamp(0.01em, 1.2vw, 0.04em);
+  text-align: center;
+  color: #000000;
   width: 100%;
   text-transform: uppercase;
   white-space: nowrap;
+  display: block;
 }
 
-.name-line-first {
-  display: block;
-  color: #000000;
-  letter-spacing: 0.02em;
-  transform: none;
+/* Layer 5: Richardsen Thomas single line in front of the mascot */
+.hero-subtitle-front-layer {
+  position: absolute;
+  bottom: clamp(1.8rem, 4.5vh, 3.8rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  pointer-events: none;
+  width: 100%;
+  max-width: 92vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.name-line-second {
-  display: block;
+.hero-single-line-name {
+  font-family: var(--font-tall);
+  font-weight: 900;
+  font-size: clamp(1.1rem, 2.6vw, 2.8rem);
+  letter-spacing: clamp(0.12em, 0.4vw, 0.26em);
+  text-transform: uppercase;
   color: #000000;
-  letter-spacing: clamp(0.32em, 4.4vw, 0.65em);
-  margin-left: clamp(0.32em, 4.4vw, 0.65em);
-  transform: none;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow: 0 2px 14px rgba(255, 255, 255, 0.8), 0 0 6px rgba(255, 255, 255, 0.95);
 }
 
 /* Layer 4: Massive 3D Mascot positioned at the bottom */
@@ -1433,9 +1446,13 @@ a {
   .hero-typography-layer {
     padding-top: 1rem;
   }
-  .hero-colossal-name {
-    font-size: clamp(2.8rem, 11.5vw, 6.5rem);
-    line-height: 0.88;
+  .hero-colossal-title {
+    font-size: clamp(6.2rem, 28vw, 13rem);
+    line-height: 0.78;
+  }
+  .hero-single-line-name {
+    font-size: clamp(0.95rem, 3.8vw, 1.4rem);
+    letter-spacing: 0.12em;
   }
   .hero-mascot-dominant-layer {
     position: relative;
