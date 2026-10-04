@@ -29,7 +29,7 @@
   
   /* Fonts */
   --font-tall: 'Gabarito', 'Rubik', sans-serif;
-  --font-slim-tall: 'Teko', 'Bebas Neue', sans-serif;
+  --font-slim-tall: 'Antonio', 'Bebas Neue', 'Teko', sans-serif;
   --font-quirky: 'Bricolage Grotesque', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-hand: 'Caveat', cursive;
@@ -236,19 +236,19 @@ a {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: clamp(2rem, 5vh, 4rem);
+  padding-top: clamp(1.2rem, 4vh, 3.2rem);
   display: flex;
   justify-content: center;
   align-items: center;
   user-select: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-colossal-title {
   font-family: var(--font-slim-tall);
   font-weight: 700;
-  font-size: clamp(8rem, 25vw, 32rem);
-  line-height: 0.76;
+  font-size: clamp(11rem, 31vw, 42rem);
+  line-height: 0.74;
   letter-spacing: clamp(0.01em, 1.2vw, 0.04em);
   text-align: center;
   color: #000000;
@@ -1440,15 +1440,16 @@ a {
   .hero-section {
     min-height: 85vh;
     height: auto;
-    padding-top: 90px;
+    padding-top: 105px;
     padding-bottom: 20px;
   }
   .hero-typography-layer {
     padding-top: 1rem;
+    overflow: visible;
   }
   .hero-colossal-title {
-    font-size: clamp(6.2rem, 28vw, 13rem);
-    line-height: 0.78;
+    font-size: clamp(5.2rem, 25vw, 11rem);
+    line-height: 0.84;
   }
   .hero-single-line-name {
     font-size: clamp(0.95rem, 3.8vw, 1.4rem);
