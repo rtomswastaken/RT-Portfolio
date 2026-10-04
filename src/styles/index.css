@@ -28,7 +28,7 @@
   --accent-navy: #022B69;
   
   /* Fonts */
-  --font-tall: 'Fredoka', 'Rubik', sans-serif;
+  --font-tall: 'Gabarito', 'Rubik', sans-serif;
   --font-quirky: 'Bricolage Grotesque', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-hand: 'Caveat', cursive;
@@ -235,7 +235,7 @@ a {
   position: relative;
   z-index: 2;
   width: 100%;
-  padding-top: clamp(5.5rem, 10vh, 8rem);
+  padding-top: clamp(4rem, 7vh, 6rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -244,14 +244,14 @@ a {
 
 .hero-colossal-name {
   font-family: var(--font-tall);
-  font-weight: 700;
-  font-size: clamp(3.6rem, 8.8vw, 10.5rem);
-  line-height: 0.94;
+  font-weight: 900;
+  font-size: clamp(5rem, 12.5vw, 15rem);
+  line-height: 0.84;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.6rem, 2vh, 2rem);
+  gap: 0;
   width: 100%;
   text-transform: uppercase;
   white-space: nowrap;
@@ -260,15 +260,15 @@ a {
 .name-line-first {
   display: block;
   color: #000000;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   transform: none;
 }
 
 .name-line-second {
   display: block;
   color: #000000;
-  font-size: 1.05em;
-  letter-spacing: 0.08em;
+  letter-spacing: clamp(0.32em, 4.4vw, 0.65em);
+  margin-left: clamp(0.32em, 4.4vw, 0.65em);
   transform: none;
 }
 
@@ -1434,7 +1434,8 @@ a {
     padding-top: 1rem;
   }
   .hero-colossal-name {
-    font-size: clamp(4.5rem, 18vw, 8rem);
+    font-size: clamp(2.8rem, 11.5vw, 6.5rem);
+    line-height: 0.88;
   }
   .hero-mascot-dominant-layer {
     position: relative;
