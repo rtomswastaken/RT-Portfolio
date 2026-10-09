@@ -1,112 +1,124 @@
-# RTOMS — RICHARDSEN THOMAS
-### Living Digital Portfolio Book & Creative Archive (2026)
+# RT-Portfolio
 
-> **CODE × DESIGN × AI × EXPERIMENTATION**  
-> Editorial design × Creative development × AI agents × Terminal systems
+Personal portfolio website of Richardsen Thomas (RTOMS), showcasing developer tools, terminal applications, local AI experiments, and web projects.
 
-A premium, highly interactive single-page personal portfolio website for **Richardsen Thomas** (`RTOMS`), built strictly around verified projects, architectures, and identity from GitHub ([@rtomswastaken](https://github.com/rtomswastaken)).
+## Overview
 
----
+RT-Portfolio is a multi-page web application built with React 19 and Vite. It serves as an interactive showcase and digital archive for personal projects, experiments, and technical background. The site includes client-side routing, smooth scrolling via Lenis, a canvas-driven organic wave background, and dedicated views for browsing project archives and contacting the author.
 
-## 🎨 Visual Identity & Design System
+## Features
 
-- **Editorial Portfolio Board Composition**: Asymmetric project weights inspired by physical design magazine plates, curated archive boards, and technical blueprints.
-- **Blue-First Atmosphere**: Midnight blue (`#06131F`), navy (`#0A1C2E`), deep slate (`#0E2A40`), cyan (`#6FD7E8`), and electric accents, with subtle violet (`#7B6CFF`) highlights.
-- **Graphic Texture Layering**: Micro halftone dot matrix, subtle film grain noise, drifting organic ambient lighting, and kinetic background typography (`CREATE`, `SYSTEMS`, `EXPLORE`, `EXPERIMENT`).
-- **Custom Desktop Magnetic Cursor**: Dynamic interaction states (`VIEW`, `RUN`, `EXPLORE`, `TERMINAL`), auto-disabled on touch and mobile devices.
+- Multi-page navigation with client-side routing between home, projects archive, and contact views.
+- Interactive canvas background with multi-layer animated wave contours and cursor wake deflection.
+- Smooth scrolling powered by Lenis and responsive layouts styled with custom CSS variables.
+- Dedicated projects archive detailing software projects, tech stacks, and repository links.
+- Contact form with support for a custom backend endpoint and fallback to direct email links.
 
----
+## Tech Stack
 
-## ⚡ Verified Project Registry
+- **Runtime & Build**: Node.js, Vite 8
+- **Frontend Framework**: React 19, React Router 7
+- **Motion & Smooth Scroll**: Lenis, GSAP
+- **Icons**: Lucide React, bespoke SVG components
+- **Linting**: Oxlint
 
-1. **Zoe Alpha v0.1** (2026)
-   - *100% Local AI Computer Assistant for macOS*
-   - Stack: Python, PyObjC, Quartz, Ollama (Qwen3:14b + MiniCPM-V), faster-whisper, NSSpeech, SQLite.
-   - Highlights: Native MacBook camera notch audio-reactive glow overlay, smooth cubic-Bezier cursor curves, autonomous screen perception loop, zero cloud telemetry.
+## Project Structure
 
-2. **chatTUI** (2026)
-   - *Modern Decentralized Terminal Chat Platform in Go*
-   - Stack: Go, Charm's Bubble Tea, Lip Gloss, SQLite, Tailscale VPN, Docker.
-   - Highlights: Keyboard ergonomics (Ctrl+K search, Ctrl+N DM), private encrypted WireGuard mesh networking, SQLite WAL persistence.
+```
+RT-Portfolio/
+├── public/              # Static assets, icons, and SVG illustrations
+├── src/
+│   ├── assets/          # Project images and graphics
+│   ├── components/      # Shared UI elements, navigation, and canvas background
+│   ├── data/            # Structured data for projects, profile, and skills
+│   ├── pages/           # Route views (HomePage, ProjectsPage, ContactPage)
+│   ├── sections/        # Homepage section components
+│   ├── styles/          # Design tokens and global CSS styles
+│   ├── App.jsx          # Root application component and route configuration
+│   └── main.jsx         # Application entry point
+├── index.html           # HTML template and Google Fonts preconnects
+├── package.json         # Project metadata and dependencies
+└── vite.config.js       # Vite configuration
+```
 
-3. **Oriah IDE** (2026)
-   - *Cursor-Inspired AI Agent Terminal IDE*
-   - Stack: Python, Textual 8.2, Pygments, Rich.
-   - Highlights: Strict 4-quadrant UI architecture (Directory Tree, Multi-Tab Editor, Interactive Agent Checklist with progress bar, and Terminal Console).
+## Featured Projects
 
-4. **EcoClassroom** (2026)
-   - *Gamified Environmental Sustainability Web App*
-   - Stack: React 19, Vite, Lucide, Canvas Confetti.
-   - Live: [eco-classroom.vercel.app](https://eco-classroom.vercel.app)
+The portfolio showcases the following projects from [@rtomswastaken](https://github.com/rtomswastaken):
 
-5. **npx rtoms** (2026)
-   - *Interactive Command-Line Terminal Portfolio*
-   - Stack: TypeScript, React, Ink, Chalk, Node.js.
-   - Run anywhere: `npx rtoms`
+- **Zoe Alpha v0.1**: Local AI computer assistant for macOS using Apple Silicon, PyObjC, Quartz, and local Ollama models (Qwen3:14b and MiniCPM-V).
+- **chatTUI**: Terminal chat client in Go built with Charm's Bubble Tea, Lip Gloss, SQLite, and Tailscale mesh networking.
+- **Oriah IDE**: Terminal code editor and agent workspace in Python using Textual 8.2, Pygments, and Rich.
+- **EcoClassroom**: Gamified sustainability tracking web app built with React 19 and Vite.
+- **npx rtoms**: Interactive terminal portfolio CLI built with TypeScript, React, Ink, and Chalk.
+- **Time Table Thingy**: Algorithmic academic scheduling engine using constraint satisfaction techniques.
+- **Docker Workshop: Random Quote**: Containerization tutorial and interactive Python CLI.
+- **Tkinter GUI Application Showcase**: Native desktop UI experiments and widget layouts in Python.
+- **Basic Python Projects Archive**: Collection of algorithmic utilities and CLI scripts.
 
-6. **Time Table Thingy** (2026)
-   - *Algorithmic Academic Scheduling Engine*
-   - Stack: Algorithms, Scheduling, Constraint Satisfaction (CSP), Python.
+## Requirements
 
-7. **Docker Workshop: Random Quote Generator** (2026)
-   - *Hands-on Containerization Tutorial & Terminal App*
-   - Stack: Python, Docker, Rich, Pyfiglet.
+- Node.js 18 or higher
+- npm 9 or higher (or compatible package manager)
 
-8. **Python GUI Showcase** (2025)
-   - *Tkinter Desktop Explorations*
+## Installation
 
-9. **Basic Python Projects Archive** (2026)
-   - *Foundational Algorithm & CLI Implementations*
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: React 19 + Vite
-- **Styling**: Vanilla CSS Editorial Design System (tokens, fluid clamp typography, halftone shaders)
-- **Motion**: Lenis Smooth Scrolling + GSAP ScrollTrigger + CSS hardware-accelerated transforms
-- **Typography**: Syne (Display), Space Grotesk (Sans), Inter (Body), JetBrains Mono (Technical Metadata)
-- **Icons**: Lucide React + Bespoke SVGs
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js >= 18
-- npm >= 9
-
-### Installation & Local Development
+1. Clone the repository:
 
 ```bash
-# Clone the repository
 git clone https://github.com/rtomswastaken/RT-Portfolio.git
 cd RT-Portfolio
+```
 
-# Install dependencies
+2. Install dependencies:
+
+```bash
 npm install
+```
 
-# Start development server
+## Configuration
+
+The application runs without additional configuration by default. To configure a custom backend endpoint for the contact form, create a `.env` file in the project root:
+
+```env
+VITE_CONTACT_ENDPOINT=https://your-api-endpoint.example.com/contact
+```
+
+If `VITE_CONTACT_ENDPOINT` is not defined, submitting the contact form automatically falls back to opening the visitor's mail client with a pre-filled message addressed to `richardsenthomas888@gmail.com`.
+
+## Usage
+
+Start the local development server:
+
+```bash
 npm run dev
 ```
 
-### Production Build
+Build for production:
 
 ```bash
 npm run build
+```
+
+Preview the production build locally:
+
+```bash
 npm run preview
 ```
 
----
+Run code linting:
 
-## 📬 Verified Channels
+```bash
+npm run lint
+```
 
-- **GitHub**: [github.com/rtomswastaken](https://github.com/rtomswastaken)
-- **LinkedIn**: [linkedin.com/in/richardsenthomas](https://github.com/rtomswastaken)
-- **Instagram**: [@rtoooms](https://instagram.com/rtoooms)
-- **Email**: [richardsenthomas888@gmail.com](mailto:richardsenthomas888@gmail.com)
-- **CLI Terminal**: `npx rtoms`
+## Contact and Links
 
----
+- GitHub: https://github.com/rtomswastaken
+- LinkedIn: https://linkedin.com/in/richardsenthomas
+- Instagram: https://instagram.com/rtoooms
+- Email: richardsenthomas888@gmail.com
+- Terminal Card: `npx rtoms`
 
-*RTOMS © 2026 Richardsen Thomas · Pathanamthitta, Kerala, India · Designed with editorial restraint × Built with modern code.*
+## License
+
+This repository does not currently include an open-source license file. All rights are reserved by the author unless explicitly stated otherwise.
